@@ -1,7 +1,11 @@
 import math
+from db_handler import DBHandler
 
 class Carrier():
-    pass
+    def __init__(self, name):
+        #Creates a new Carrier for the player
+        self.name = name
+    
 
 class Airplane():
     pass
@@ -9,8 +13,8 @@ class Airplane():
 class App():
     def __init__(self):
         self.running = True
-        self.i = 0
         while self.running:
-            pass
+            #Initializing the game 
+            carrier = Carrier()
 
 app = App()
