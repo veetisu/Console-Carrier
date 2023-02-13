@@ -1,6 +1,7 @@
 import mariadb
 import sys
 import os
+import geopy.distance
 class Db_handler():
     def __init__(self):
         try:
@@ -17,4 +18,5 @@ class Db_handler():
         self.cursor = conn.cursor()
     
     def get_starting_airports(self):
+        
         pass
