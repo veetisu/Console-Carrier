@@ -35,17 +35,19 @@ class Db_handler():
         #Distance filtering, HOW?
         self.cursor.execute("SELECT airport.type, airport.name, airport.latitude_deg, airport.longitude_deg, country.name FROM airport JOIN country ON airport.iso_country = country.iso_country")
         all_airports = self.cursor.fetchall()
-        airplane_coordinates = carrier.planes
+        airplane_location = carrier.airplanes[0].location
+        self.cursor.execute("SELECT airport.latitude_deg, airport.longitude_deg FROM airport WHERE iso_country = ?")
         results = []
         while len(results)<cfg.MAX_AIRPORTS_PER_SEARCH:
             random_airport=random.choice(all_airports)
             random_airport_coords = (random_airport[2],random_airport[3])
             distance_from_plane = geopy.distance.distance(point1,random_airport_coords).km
             
-            return
+        return results
             
     def add_airplane(self, airport, carrier, type, name):
         #Where airport comes from??
         self.cursor.execute("INSERT INTO plane (carrier_id, airport, type, name) VALUES (?, ?, ?)",(carrier.id, airport, type, name))
+        
 app = Db_handler()
 app.get_next_airports()

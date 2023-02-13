@@ -21,9 +21,15 @@ class UI:
         print("3. TBM 930")
         airplane_type = int(input("Choose one of the planes (1/2/3): "))
         print("Choose the starting airport for your carrier: ")
-        test = db_handler.get_starting_airports()
-        print(test)
+        
+        #This variable is not supposed to be harcoded!! Need logic for user input
+        starting_airport = "EFHK"
+        
         carrier = Carrier(name_input)
+        
+        #FIX!!
+        carrier.new_plane("C172")
+        
         #Lines for printing messages to player
         self.lines = {
             
