@@ -24,20 +24,28 @@ class Db_handler():
         #Gotta have Helsinki Vantaa
         #Startairports hardcoded
         
-        #
         wanted_airports = ("EFHK","ESSA","EFOU","EKOD")
         self.cursor.execute("SELECT airport.name, country.name FROM airport JOIN country ON airport.iso_country = country.iso_country WHERE ident IN (?, ?, ?, ?)", wanted_airports)
         airports = self.cursor.fetchall()
         return airports
-    def get_next_airports(self):
+    
+    def get_next_airports(self,carrier,plane):
         #few random airports
         #Range limited by airplane
         #Distance filtering, HOW?
         self.cursor.execute("SELECT airport.type, airport.name, airport.latitude_deg, airport.longitude_deg, country.name FROM airport JOIN country ON airport.iso_country = country.iso_country")
         all_airports = self.cursor.fetchall()
+        airplane_coordinates = carrier.planes
         results = []
         while len(results)<cfg.MAX_AIRPORTS_PER_SEARCH:
-            random.choice(all_airports)
-
+            random_airport=random.choice(all_airports)
+            random_airport_coords = (random_airport[2],random_airport[3])
+            distance_from_plane = geopy.distance.distance(point1,random_airport_coords).km
+            
+            return
+            
+    def add_airplane(self, airport, carrier, type, name):
+        #Where airport comes from??
+        self.cursor.execute("INSERT INTO plane (carrier_id, airport, type, name) VALUES (?, ?, ?)",(carrier.id, airport, type, name))
 app = Db_handler()
 app.get_next_airports()

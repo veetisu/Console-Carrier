@@ -10,6 +10,7 @@ class Carrier():
     #TI: Method to add / remove given amount of resources
     #TI: Method to print players resources, return nice string for printing
 
+    #Carrier needs to have attribute id referring to its id on the db 
 class Airplane():
     def __init__(self, type):
         pass
