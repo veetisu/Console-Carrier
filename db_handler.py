@@ -1,6 +1,7 @@
 import mariadb
 import sys
 import os
+import geopy.distance
 class Db_handler():
     def __init__(self):
         try:
@@ -14,4 +15,8 @@ class Db_handler():
         except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
-    pass
+        self.cursor = conn.cursor()
+    
+    def get_starting_airports(self):
+        
+        pass
