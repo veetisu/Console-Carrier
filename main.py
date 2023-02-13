@@ -19,6 +19,11 @@ class App():
             return
         if self.gamestate == "Initializing":
             ui.initial_setup()
+        #Gamestates
+            #initializing
+            #waiting?
+            #choose/menu
+            #Game over
             
 
 app = App()
