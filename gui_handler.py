@@ -21,12 +21,19 @@ class UI:
         print("3. TBM 930")
         airplane_type = int(input("Choose one of the planes (1/2/3): "))
         print("Choose the starting airport for your carrier: ")
-        test = db_handler.get_starting_airports()
-        print(test)
-        carrier = Carrier(name_input)
+        
+        #This variable is not supposed to be harcoded!! Need logic for user input
+        starting_airport = "EFHK"
+        
+        carrier = Carrier(name_input,starting_airport)
+        carrier.new_plane("C172")
+        #FIX!!
+        
         #Lines for printing messages to player
         self.lines = {
             
         }
+        return carrier
+        
     def get_random_line(self,scenario):
         return random.choice(self.lines[scenario])
