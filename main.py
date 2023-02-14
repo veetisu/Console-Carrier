@@ -7,14 +7,13 @@ from gui_handler import UI
 from carrier_handler import Carrier
 
 db_handler = Db_handler()
+
 ui = UI()
 
 class App():
     def __init__(self):
         self.running = True
         self.gamestate = "Initializing"
-    def get_random_line(self,scenario):
-        return random.choice(self.lines[scenario])
         
     def run(self):
         if not self.running:
@@ -23,8 +22,12 @@ class App():
             carrier = ui.initial_setup()
             carrier.new_plane("C172")
             self.gamestate = "new_airports"
+            
         if self.gamestate == "new_airports":
-            db_handler.get_next_airports(carrier, carrier.airplanes[0])
+        #WORKS WITH ONLY ONE PLANE
+            selected_airplane = carrier.airplanes[0]
+            new_airports = db_handler.get_next_airports(selected_airplane)
+            print(new_airports)
         if self.gamestate == "menu":
             pass
         #Gamestates
