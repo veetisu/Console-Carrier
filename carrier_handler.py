@@ -4,7 +4,7 @@ from airplane import Airplane
 db_handler = Db_handler()
 class Carrier():
     #TI = To Implement
-    def __init__(self, name):
+    def __init__(self, name, headquarters_):
         #Creates a new Carrier for the player
         self.name = name
         self.airplanes = []
@@ -28,6 +28,3 @@ class Carrier():
     #TI: Method to print players resources, return nice string for printing
 
     #Carrier needs to have attribute id referring to its id on the db 
-
-carrier = Carrier("LOL")
-carrier.new_plane("C172")

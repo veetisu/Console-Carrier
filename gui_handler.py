@@ -25,8 +25,8 @@ class UI:
         #This variable is not supposed to be harcoded!! Need logic for user input
         starting_airport = "EFHK"
         
-        carrier = Carrier(name_input)
-        
+        carrier = Carrier(name_input,starting_airport)
+        carrier.new_plane("C172")
         #FIX!!
         
         #Lines for printing messages to player

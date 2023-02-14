@@ -22,6 +22,9 @@ class App():
         if self.gamestate == "Initializing":
             carrier = ui.initial_setup()
             carrier.new_plane("C172")
+            self.gamestate = "new_airports"
+        if self.gamestate == "new_airports":
+            db_handler.get_next_airports(carrier, carrier.airplanes[0])
         if self.gamestate == "menu":
             pass
         #Gamestates
