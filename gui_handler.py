@@ -28,11 +28,12 @@ class UI:
         carrier = Carrier(name_input)
         
         #FIX!!
-        carrier.new_plane("C172")
         
         #Lines for printing messages to player
         self.lines = {
             
         }
+        return carrier
+        
     def get_random_line(self,scenario):
         return random.choice(self.lines[scenario])
