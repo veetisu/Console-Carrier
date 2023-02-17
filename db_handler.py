@@ -27,12 +27,13 @@ class Db_handler():
 
     
     def get_next_airports(self, plane):
+        # Return a list of airports in the planes range
         results = []
-        #Retuns a list of all airports in db
+        # Retuns a list of all airports in db
         self.cursor.execute("SELECT airport.type, airport.name, airport.latitude_deg, airport.longitude_deg, country.name FROM airport JOIN country ON airport.iso_country = country.iso_country")
         all_airports = self.cursor.fetchall()
 
-        #Retuns coordinates for the airport the plane is currently in
+        # Retuns coordinates for the airport the plane is currently in
         self.cursor.execute("SELECT latitude_deg, longitude_deg FROM airport WHERE ident = ?", (plane.location,))
         airplane_coords = self.cursor.fetchall()
         
@@ -40,7 +41,6 @@ class Db_handler():
             random_airport = random.choice(all_airports)
             random_airport_coords = (random_airport[2],random_airport[3])
             distance_from_plane = geopy.distance.distance(airplane_coords,random_airport_coords).km
-            #pls no more hardcoded values
             if distance_from_plane<plane.range:
                 results.append(random_airport)
         return results
