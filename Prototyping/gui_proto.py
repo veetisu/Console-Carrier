@@ -21,19 +21,27 @@ class gui_handler():
         self.stdscr.clear()
 
         # All actual function below this
-        
-
         print()
 
     # Terminating curses app
-    #curses.nocbreak()
-    #stdscr.keypad(False)
-    #curses.endwin()
+
+    def curses_off(self):
+        curses.nocbreak()
+        self.stdscr.keypad(False)
+        curses.endwin()
 
 class screens():
 
+    # Splash screen
     def start_screen():
         print("Start")
 
+    # Where the game asks for the airport
     def initial_setup():
         print("Setup")
+    
+    # 
+    def main_window():
+        print("Main")
+
+    
