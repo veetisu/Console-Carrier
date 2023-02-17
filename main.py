@@ -5,6 +5,7 @@ from db_handler import Db_handler
 import os
 from gui_handler import UI
 from carrier_handler import Carrier
+from airplane import Airplane
 
 db_handler = Db_handler()
 
@@ -35,7 +36,17 @@ class App():
             #waiting?
             #choose/menu
             #Game over
-            
+    def run_test(self):
+        #Creates dummy info for testing
+        carrier = Carrier("DummyCarrier","EFHK")
+        plane = Airplane(carrier.id,"C172",carrier.headquarters)
+        while True:
+            routes = db_handler.get_next_airports(plane)
+            plane.fly(routes[1],carrier)
+            print(plane.location)
+            input("Press enter")
 
 app = App()
-app.run()
+#app.run()
+app.run_test()
+db_handler.exit()

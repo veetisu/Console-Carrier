@@ -4,6 +4,7 @@ import os
 import geopy.distance
 import random
 import config as cfg
+from route_handler import Route
 class Db_handler():
     def __init__(self):
         try:
@@ -29,8 +30,8 @@ class Db_handler():
     def get_next_airports(self, plane):
         # Return a list of airports in the planes range
         results = []
-        # Retuns a list of all airports in db
-        self.cursor.execute("SELECT airport.type, airport.name, airport.latitude_deg, airport.longitude_deg, country.name FROM airport JOIN country ON airport.iso_country = country.iso_country")
+        #Retuns a list of all airports in db
+        self.cursor.execute("SELECT airport.type, airport.name, airport.latitude_deg, airport.longitude_deg, airport.ident, country.name FROM airport JOIN country ON airport.iso_country = country.iso_country")
         all_airports = self.cursor.fetchall()
 
         # Retuns coordinates for the airport the plane is currently in
@@ -42,7 +43,8 @@ class Db_handler():
             random_airport_coords = (random_airport[2],random_airport[3])
             distance_from_plane = geopy.distance.distance(airplane_coords,random_airport_coords).km
             if distance_from_plane<plane.range:
-                results.append(random_airport)
+                
+                results.append((random_airport,distance_from_plane))
         return results
     
     def add_carrier(self,carrier):
