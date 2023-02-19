@@ -25,6 +25,7 @@ class Carrier():
         
     def update_resource(self, resource, amount):
     # Method to add / remove given amount of resources
+    # Stupid/unusefull method??
         if hasattr(self, resource):
             setattr(self, resource, getattr(self, resource) + amount)
         else:

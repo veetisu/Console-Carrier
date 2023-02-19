@@ -27,7 +27,7 @@ class App():
         if self.gamestate == "new_airports":
         #WORKS WITH ONLY ONE PLANE
             selected_airplane = carrier.airplanes[0]
-            new_airports = db_handler.get_next_airports(selected_airplane)
+            new_airports = db_handler.get_next_routes(selected_airplane)
             print(new_airports)
         if self.gamestate == "menu":
             pass
@@ -37,16 +37,19 @@ class App():
             #choose/menu
             #Game over
     def run_test(self):
-        #Creates dummy info for testing
+        # Creates dummy data for testing, not to be used in production, only a testing environment
         carrier = Carrier("DummyCarrier","EFHK")
-        plane = Airplane(carrier.id,"C172",carrier.headquarters)
+        airport = db_handler.add_airport("EFHK")
+        plane = Airplane(carrier.id,"C172",airport)
         while True:
-            routes = db_handler.get_next_airports(plane)
-            plane.fly(routes[1],carrier)
-            print(plane.location)
+            routes = db_handler.get_next_routes(plane)
+            db_handler.carrier_is_created
+            print(routes)
             input("Press enter")
+            plane.fly(routes[1],carrier)
 
 app = App()
 #app.run()
+db_handler.add_airport("EFHK")
 app.run_test()
 db_handler.exit()
