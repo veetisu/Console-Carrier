@@ -7,7 +7,6 @@ from airplane import Airplane
 class Airport():
     """This class represents a single airport"""
     def __init__(self, data):
-        """"(2307, 'EFHK', 'large_airport', 'Helsinki Vantaa Airport', 60.3172, 24.963301, 179, 'EU', 'FI', 'FI-18', 'Helsinki', 'yes', 'EFHK', 'HEL', '', 'http://www.finavia.fi/en/helsinki-airpor', 'https://en.wikipedia.org/wiki/Helsinki_A', '')"""
         self.id = data[0]
         self.icao = data[1]
         self.type = data[2]
@@ -49,7 +48,7 @@ class Route():
             self.add_money(carrier)     
         
     def passengers(self) -> int:
-        """Returns the number of passengers"""
+        """Returns the number of passengers that will be onboard this flight"""
         result = 0
         max_passengers = self.plane.passenger_capacity
         potential_passengers = self.departure_airport.airport_passengers()
