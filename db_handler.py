@@ -34,8 +34,6 @@ class Db_handler():
         Args:
             plane: The plane object for which you want to get the routes (The planes location is the departure airport )
         """
-        #This method seriously needs some more work, it is a functional pile of shit...
-        #OPTIMIZE!!!!!!!!!!!!!!!!
         results = []
         #Retuns a list of all airports in db
         type_filter = ("large_airport", "medium_airport", "small_airport")
@@ -49,11 +47,9 @@ class Db_handler():
             random_airport = random.choice(all_airports)
             all_airports.remove(random_airport)
             random_airport_coords = (random_airport[2],random_airport[3])
-            # I know this dist calc is done twice, but its shitdev branch...
             distance_from_plane = geopy.distance.distance(airplane_coords, random_airport_coords).km
             iterations += 1
             if distance_from_plane < plane.range and random_airport[4] != plane.airport.icao:
-                # More elegant solutions do exist... :D
                 departure_airport = self.add_airport(plane.airport.icao)
                 arrival_airport = self.add_airport(random_airport[4])
                 route = Route(departure_airport,arrival_airport,plane)
