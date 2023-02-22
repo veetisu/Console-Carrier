@@ -3,13 +3,13 @@ import random
 import time
 from db_handler import Db_handler
 import os
-from gui_handler import UI
+from gui_proto import gui_handler
 from carrier_handler import Carrier
 from airplane import Airplane
 
 db_handler = Db_handler()
 
-ui = UI()
+ui = gui_handler()
 
 class App():
     def __init__(self):
