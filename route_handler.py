@@ -24,6 +24,7 @@ class Airport():
         passengers = random.randint(cfg.airport_min_passenger,cfg.airport_max_passenger)
         airport_type_multiplier = cfg.airport_passenger_multiplier.get(self.type)
         passengers = passengers * airport_type_multiplier
+        return passengers
 class Route():
     """"This class represents a route between two different airports"""
     
@@ -58,11 +59,12 @@ class Route():
             result = max_passengers
         return result
     
-    def add_money(self) -> int:
+    def add_money(self,carrier) -> int:
         """Adds the amount of money that the route generates when flown to the carriers money balance.
         Returns: The value added to carriers balance"""
         money_per_passenger = cfg.money_per_passenger_per_km * self.route_lenght
         total_money = money_per_passenger * self.passengers()
+        carrier.money += total_money
         return total_money
     
         

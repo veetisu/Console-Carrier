@@ -34,26 +34,33 @@ class Db_handler():
         Args:
             plane: The plane object for which you want to get the routes (The planes location is the departure airport )
         """
+        #This method seriously needs some more work, it is a functional pile of shit...
+        #OPTIMIZE!!!!!!!!!!!!!!!!
         results = []
         #Retuns a list of all airports in db
-        self.cursor.execute("SELECT airport.type, airport.name, airport.latitude_deg, airport.longitude_deg, airport.ident, country.name FROM airport JOIN country ON airport.iso_country = country.iso_country")
+        type_filter = ["large_airport", "medium_airport", "small_airport"]
+        self.cursor.execute("SELECT airport.type, airport.name, airport.latitude_deg, airport.longitude_deg, airport.ident, country.name FROM airport JOIN country ON airport.iso_country = country.iso_country WHERE airport.type IN {}"))
         all_airports = self.cursor.fetchall()
 
         # Retuns coordinates for the airport the plane is currently in
         self.cursor.execute("SELECT latitude_deg, longitude_deg FROM airport WHERE ident = ?", (plane.airport,))
         airplane_coords = self.cursor.fetchall()
         
+        iterations = 0
         while len(results)<cfg.MAX_AIRPORTS_PER_SEARCH:
             random_airport = random.choice(all_airports)
             random_airport_coords = (random_airport[2],random_airport[3])
             # I know this dist calc is done twice, but its shitdev branch...
             distance_from_plane = geopy.distance.distance(airplane_coords, random_airport_coords).km
-            if distance_from_plane < plane.range:
+            
+            iterations += 1
+            if distance_from_plane < plane.range and random_airport[0] in type_filter:
                 # More elegant solutions do exist... :D
                 departure_airport = self.add_airport(plane.airport.icao)
                 arrival_airport = self.add_airport(random_airport[4])
                 route = Route(departure_airport,arrival_airport,plane)
                 results.append(route)
+        print(f"Had to go through {iterations} iterations")
         return results
     
     def add_airport(self, icao):
