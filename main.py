@@ -43,11 +43,13 @@ class App():
         plane = Airplane(carrier.id,"C172",airport)
         while True:
             routes = db_handler.get_next_routes(plane)
-            db_handler.carrier_is_created
+
             print(routes[1])
-            input("Press enter")
-            routes[1].fly(plane,carrier)
-            print(carrier.money)
+            print(f"Carrier balance: {carrier.money:.0f} €")
+            print(f"Carrier fuel: {carrier.fuel:.0f} l")
+            input("Press enter to fly \n")
+            print(routes[1].fly(plane,carrier))
+
 
 app = App()
 #app.run()

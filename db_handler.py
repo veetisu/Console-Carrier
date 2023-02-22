@@ -38,23 +38,21 @@ class Db_handler():
         #OPTIMIZE!!!!!!!!!!!!!!!!
         results = []
         #Retuns a list of all airports in db
-        type_filter = ["large_airport", "medium_airport", "small_airport"]
-        self.cursor.execute("SELECT airport.type, airport.name, airport.latitude_deg, airport.longitude_deg, airport.ident, country.name FROM airport JOIN country ON airport.iso_country = country.iso_country WHERE airport.type IN {}"))
+        type_filter = ("large_airport", "medium_airport", "small_airport")
+        self.cursor.execute("SELECT airport.type, airport.name, airport.latitude_deg, airport.longitude_deg, airport.ident, country.name FROM airport JOIN country ON airport.iso_country = country.iso_country WHERE airport.type IN {}".format(type_filter))
         all_airports = self.cursor.fetchall()
 
-        # Retuns coordinates for the airport the plane is currently in
-        self.cursor.execute("SELECT latitude_deg, longitude_deg FROM airport WHERE ident = ?", (plane.airport,))
-        airplane_coords = self.cursor.fetchall()
+        airplane_coords = (plane.airport.latitude,plane.airport.longitude)
         
         iterations = 0
         while len(results)<cfg.MAX_AIRPORTS_PER_SEARCH:
             random_airport = random.choice(all_airports)
+            all_airports.remove(random_airport)
             random_airport_coords = (random_airport[2],random_airport[3])
             # I know this dist calc is done twice, but its shitdev branch...
             distance_from_plane = geopy.distance.distance(airplane_coords, random_airport_coords).km
-            
             iterations += 1
-            if distance_from_plane < plane.range and random_airport[0] in type_filter:
+            if distance_from_plane < plane.range and random_airport[4] != plane.airport.icao:
                 # More elegant solutions do exist... :D
                 departure_airport = self.add_airport(plane.airport.icao)
                 arrival_airport = self.add_airport(random_airport[4])

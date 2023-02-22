@@ -1,4 +1,4 @@
-MAX_AIRPORTS_PER_SEARCH = 4
+MAX_AIRPORTS_PER_SEARCH = 3
 STARTING_FUEL = 100000
 STARTING_MONEY = 100
 
@@ -19,7 +19,7 @@ PLANES = {
     "C172" : {
         "name": "Cessna-172",
         #range in nautical miles!!
-        "range": 640,
+        "range": 1185,
         "passenger_capacity":3,
         #Litres per km
         "fuel_consumption": 1

@@ -46,7 +46,9 @@ class Route():
         enough_fuel = self.plane.consume_fuel(self, carrier)
         if enough_fuel:
             plane.airport = self.arrival_airport
-            self.add_money(carrier)     
+            total_money = self.total_money()     
+            carrier.money += total_money
+        return(f"Flew safely to {self.arrival_airport.name}")
         
     def passengers(self) -> int:
         """Returns the number of passengers that will be onboard this flight"""
@@ -59,13 +61,15 @@ class Route():
             result = max_passengers
         return result
     
-    def add_money(self,carrier) -> int:
+    def total_money(self) -> int:
         """Adds the amount of money that the route generates when flown to the carriers money balance.
         Returns: The value added to carriers balance"""
         money_per_passenger = cfg.money_per_passenger_per_km * self.route_lenght
         total_money = money_per_passenger * self.passengers()
-        carrier.money += total_money
         return total_money
+    
+    def __str__(self) -> str:
+        return f"{self.route_lenght:.0f}km route from {self.departure_airport.name} to {self.arrival_airport.name} with {self.passengers()} passengers yelding {self.total_money():.0f} €"
     
         
 
