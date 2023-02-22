@@ -12,10 +12,11 @@ class Carrier():
         #Shouldn't be hardcoded!
         self.headquarters = "EFHK"
         self.id = 1
+        
         self.resources = ["fuel","money"]
-
         self.fuel = cfg.STARTING_FUEL
         self.money = cfg.STARTING_MONEY
+        
         db_handler.add_carrier(self)
         
     def new_plane(self, type, airplane_name="Airplane"):
@@ -24,6 +25,7 @@ class Carrier():
         
     def update_resource(self, resource, amount):
     # Method to add / remove given amount of resources
+    # Stupid/unusefull method??
         if hasattr(self, resource):
             setattr(self, resource, getattr(self, resource) + amount)
         else:
@@ -36,3 +38,4 @@ class Carrier():
             if hasattr(self, resource):
                 results.append((resource,getattr(self, resource)))
         return results
+    

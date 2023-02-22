@@ -4,6 +4,8 @@ import os
 import geopy.distance
 import random
 import config as cfg
+from route_handler import Route, Airport
+
 class Db_handler():
     def __init__(self):
         try:
@@ -26,29 +28,56 @@ class Db_handler():
         return self.cursor.fetchall()
 
     
-    def get_next_airports(self, plane):
+    def get_next_routes(self, plane):
+        """Returns a list of routes in the planes range 
+        
+        Args:
+            plane: The plane object for which you want to get the routes (The planes location is the departure airport )
+        """
         results = []
         #Retuns a list of all airports in db
-        self.cursor.execute("SELECT airport.type, airport.name, airport.latitude_deg, airport.longitude_deg, country.name FROM airport JOIN country ON airport.iso_country = country.iso_country")
+        type_filter = ("large_airport", "medium_airport", "small_airport")
+        self.cursor.execute("SELECT airport.type, airport.name, airport.latitude_deg, airport.longitude_deg, airport.ident, country.name FROM airport JOIN country ON airport.iso_country = country.iso_country WHERE airport.type IN {}".format(type_filter))
         all_airports = self.cursor.fetchall()
 
-        #Retuns coordinates for the airport the plane is currently in
-        self.cursor.execute("SELECT latitude_deg, longitude_deg FROM airport WHERE ident = ?", (plane.location,))
-        airplane_coords = self.cursor.fetchall()
+        airplane_coords = (plane.airport.latitude,plane.airport.longitude)
         
+        iterations = 0
         while len(results)<cfg.MAX_AIRPORTS_PER_SEARCH:
             random_airport = random.choice(all_airports)
+            all_airports.remove(random_airport)
             random_airport_coords = (random_airport[2],random_airport[3])
-            distance_from_plane = geopy.distance.distance(airplane_coords,random_airport_coords).km
-            #pls no more hardcoded values
-            if distance_from_plane<plane.range:
-                results.append(random_airport)
+            distance_from_plane = geopy.distance.distance(airplane_coords, random_airport_coords).km
+            iterations += 1
+            if distance_from_plane < plane.range and random_airport[4] != plane.airport.icao:
+                departure_airport = self.add_airport(plane.airport.icao)
+                arrival_airport = self.add_airport(random_airport[4])
+                route = Route(departure_airport,arrival_airport,plane)
+                results.append(route)
+        print(f"Had to go through {iterations} iterations")
         return results
+    
+    def add_airport(self, icao):
+        """Makes a new aiport object from the airport with the provided icao code and returns it"""
+        self.cursor.execute("SELECT * FROM airport WHERE ident = ?",(icao,))
+        data = self.cursor.fetchone()
+        airport = Airport(data)
+        return airport
     
     def add_carrier(self,carrier):
         self.cursor.execute("INSERT INTO carrier (carrier_name, fuel, carrier_money) VALUES (?, ?, ? )",(carrier.name, carrier.fuel, carrier.money))
         self.conn.commit()
         carrier.id = self.cursor.lastrowid
+    
+    def carrier_is_created(self):
+        """ Returns True if carrier exists in db and False otherwise. """
+        
+        self.cursor.execute("SELECT COUNT(*) FROM carrier")
+        result = self.cursor.fetchone()
+        if result == 0:
+            False
+        else:
+            True
         
     def add_airplane(self, airport, carrier, type, name):
         self.cursor.execute("INSERT INTO plane (carrier_id, airport_id, type, name) VALUES (?, ?, ?, ?)",(carrier.id, airport, type, name))
