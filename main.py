@@ -7,6 +7,7 @@ from gui_proto import gui_handler
 from carrier_handler import Carrier
 from airplane import Airplane
 
+import atexit
 db_handler = Db_handler()
 
 ui = gui_handler()
@@ -22,9 +23,9 @@ class App():
         if self.gamestate == "Initializing":
             carrier = ui.initial_setup()
             carrier.new_plane("C172")
-            self.gamestate = "new_airports"
+            self.gamestate = "main_menu"
             
-        if self.gamestate == "new_airports":
+        if self.gamestate == "main_menu":
         #WORKS WITH ONLY ONE PLANE
             selected_airplane = carrier.airplanes[0]
             new_airports = db_handler.get_next_routes(selected_airplane)
@@ -39,6 +40,7 @@ class App():
     def run_test(self):
         # Creates dummy data for testing, not to be used in production, only a testing environment
         carrier = Carrier("DummyCarrier","EFHK")
+        atexit.register(carrier.save)   
         airport = db_handler.add_airport("EFHK")
         plane = Airplane(carrier.id,"C172",airport)
         while True:

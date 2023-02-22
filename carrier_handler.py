@@ -1,6 +1,8 @@
 from db_handler import Db_handler
 from airplane import Airplane
 import config as cfg
+import pickle
+
 db_handler = Db_handler()
 class Carrier():
     #TI = To Implement
@@ -39,3 +41,7 @@ class Carrier():
                 results.append((resource,getattr(self, resource)))
         return results
     
+    def save(self):
+        save_file = open("gamesave.obj","wb")
+        pickle.dump(self,save_file)
+        save_file.close()
