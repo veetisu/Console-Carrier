@@ -12,8 +12,10 @@ airport_passenger_multiplier = {
     "small_airport": 2,
     "closed" : 0
 }
-
 money_per_passenger_per_km = 1
+
+vip_chance = 0.2
+
 
 PLANES = {
     "C172" : {
