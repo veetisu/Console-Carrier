@@ -32,15 +32,24 @@ class Screens():
 
     # Splash screen
     def splash_screen(self):
+        """Splash screen stuff"""
+
         # Clearing screen
         GUI_Handler.stdscr.clear()
         # App doesn't display user's input on the terminal line (for the static GUI to work)
         curses.noecho()
         # User doesn't need to hit enter to input characters when cbreak function is called
         curses.cbreak()
-        GUI_Handler.stdscr.addstr(0, 0, "Current mode: Typing mode",
+
+        whole_name = []
+
+        for i in "Console Carrier":
+            whole_name.append(i)
+            printable_name = "".join(whole_name)
+            GUI_Handler.stdscr.addstr(10, 10, str(printable_name),
               curses.A_REVERSE)
-        GUI_Handler.stdscr.refresh()
+            GUI_Handler.stdscr.refresh()
+            time.sleep(0.1)
         time.sleep(3)
 
     # Where the game asks for the airport
