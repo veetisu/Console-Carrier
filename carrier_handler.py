@@ -42,6 +42,5 @@ class Carrier():
         return results
     
     def save(self):
-        save_file = open("gamesave.obj","wb")
-        pickle.dump(self,save_file)
-        save_file.close()
+        with open('carrier_save.pickle', 'wb') as f:
+            pickle.dump(self, f)

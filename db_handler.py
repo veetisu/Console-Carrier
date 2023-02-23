@@ -75,9 +75,9 @@ class Db_handler():
         self.cursor.execute("SELECT COUNT(*) FROM carrier")
         result = self.cursor.fetchone()
         if result == 0:
-            False
+            return False
         else:
-            True
+            return True
         
     def add_airplane(self, airport, carrier, type, name):
         self.cursor.execute("INSERT INTO plane (carrier_id, airport_id, type, name) VALUES (?, ?, ?, ?)",(carrier.id, airport, type, name))
