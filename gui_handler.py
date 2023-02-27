@@ -67,16 +67,61 @@ class Screens():
                 int(os.get_terminal_size().lines/2), 
                 int(os.get_terminal_size().columns/2-len(whole_name)/2), 
                 str(printable_name),
-                curses.A_REVERSE)
+                curses.A_REVERSE
+            )
 
             UI.stdscr.refresh()
             time.sleep(0.1)
         time.sleep(3)
 
-    # Where the game asks for the airport
+    # Where the game asks for the airport and where you make all the choices
     def setup_screen(screen_title, col_1_attributename, col_2_value, textbox_content):
-        print("Setup")
+        
+        # Clearing screen
+        UI.stdscr.clear()
+        # App doesn't display user's input on the terminal line (for the static GUI to work)
+        curses.noecho()
+        # User doesn't need to hit enter to input characters when cbreak function is called
+        curses.cbreak()
+        # Enables curses to understand key press as a text command
+        UI.stdscr.keypad(True)
+
+        # Sets the title
+        UI.stdscr.addstr(
+            int(os.get_terminal_size().columns/2-len(screen_title)/2),
+            2,
+            str(screen_title),
+            curses.A_REVERSE
+        )
+
+        # Sets the left column name
+        UI.stdscr.addstr(
+            int(os.get_terminal_size().columns/2-5),
+            5,
+            str(col_1_attributename),
+            curses.A_REVERSE
+        )
+
+        # Sets the right column name
+        UI.stdscr.addstr(
+            int(os.get_terminal_size().columns/2+5),
+            5,
+            str(col_2_value),
+            curses.A_REVERSE
+        )
+
+        # Sets textbox content
+        UI.stdscr.addstr(
+            int(os.get_terminal_size().lines-2),
+            5,
+            str(textbox_content),
+            curses.A_REVERSE
+        )
+
+        UI.stdscr.refresh()
+
+
     
     # The game's main window where your carriers planes are shown
     def main_screen():
-        print("Main")
+        pass
