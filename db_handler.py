@@ -9,7 +9,7 @@ class Db_handler():
         try:
             self.conn = mariadb.connect(
                 user="root",
-                password= os.environ.get("DBPASS") or "88889538911",
+                password= os.environ.get("DBPASS") or "admin",
                 host="localhost",
                 port=3306,
                 database="flight_game"
