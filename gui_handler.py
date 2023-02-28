@@ -43,7 +43,7 @@ class UI:
     def get_random_line(self,scenario):
         return random.choice(self.lines[scenario])
     
-class Screens():
+class Screens:
     """A class for the different screen/window types of the program."""
 
     # Splash screen
@@ -76,7 +76,8 @@ class Screens():
 
     # Where the game asks for the airport and where you make all the choices
     def setup_screen(screen_title, col_1_attributename, col_2_value, textbox_content):
-        
+        """A screen function for all setup cases in-game which lays out all the info visually"""
+
         # Clearing screen
         UI.stdscr.clear()
         # App doesn't display user's input on the terminal line (for the static GUI to work)
@@ -119,8 +120,6 @@ class Screens():
         )
 
         UI.stdscr.refresh()
-
-
     
     # The game's main window where your carriers planes are shown
     def main_screen():
