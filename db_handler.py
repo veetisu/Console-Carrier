@@ -57,6 +57,7 @@ class Db_handler():
         print(f"Had to go through {iterations} iterations")
         return results
     
+    
     def add_airport(self, icao):
         """Makes a new aiport object from the airport with the provided icao code and returns it"""
         self.cursor.execute("SELECT * FROM airport WHERE ident = ?",(icao,))

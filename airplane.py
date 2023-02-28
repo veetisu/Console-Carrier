@@ -1,7 +1,8 @@
 import config as cfg
 class Airplane():
-    def __init__(self,carrier_id, type, airport):
+    def __init__(self,carrier_id, type, airport, name = "Airplane"):
         self.type = type
+        self.name  = name
         # airport is a Aiport object
         self.airport = airport
         self.carrier_id = carrier_id
@@ -32,3 +33,5 @@ class Airplane():
         #To be implemented
         print("You have crashed")
         pass
+    
+    
