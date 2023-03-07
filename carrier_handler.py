@@ -23,7 +23,8 @@ class Carrier():
         
     def new_plane(self, type, airplane_name="Airplane"):
         db_handler.add_airplane(self.headquarters,self,type,airplane_name)
-        self.airplanes.append(Airplane(self.id, type, self.headquarters))
+        airport = db_handler.add_airport(self.headquarters)
+        self.airplanes.append(Airplane(self.id, type, airport))
         
     def update_resource(self, resource, amount):
     # Method to add / remove given amount of resources
@@ -42,5 +43,5 @@ class Carrier():
         return results
     
     def save(self):
-        with open('carrier_save.pickle', 'wb') as f:
+        with open('save/carrier_save.pickle', 'wb') as f:
             pickle.dump(self, f)

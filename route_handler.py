@@ -19,6 +19,7 @@ class Airport():
         self.iso_country = data[8]
         self.iso_region = data[9]
         self.municipality = data[10]
+        self.country_name = data[19]
         
     def airport_passengers(self):
         """Returns how many passenger are available from the airport, it is determined on random, but bigger airports will have more passengers on average"""   
@@ -42,6 +43,7 @@ class Route():
         self.vip = None
         self.has_vip = self.generate_vip()
         self.vip_accepted = None
+        self.fuel_required = self.plane.fuel_consumption * self.route_lenght
         
     def fly(self, plane, carrier) -> None:
         """This is the method that shall be called when you want to fly the route. 

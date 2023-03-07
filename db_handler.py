@@ -24,7 +24,7 @@ class Db_handler():
     def get_starting_airports(self):
         #Returns info for the airports specified below
         wanted_airports = ("EFHK","ESSA","EFOU","EKOD")
-        self.cursor.execute("SELECT airport.name, country.name FROM airport JOIN country ON airport.iso_country = country.iso_country WHERE ident IN (?, ?, ?, ?)", wanted_airports)
+        self.cursor.execute("SELECT airport.name, country.name, airport.ident FROM airport JOIN country ON airport.iso_country = country.iso_country WHERE ident IN (?, ?, ?, ?)", wanted_airports)
         return self.cursor.fetchall()
 
     
@@ -54,13 +54,12 @@ class Db_handler():
                 arrival_airport = self.add_airport(random_airport[4])
                 route = Route(departure_airport,arrival_airport,plane)
                 results.append(route)
-        print(f"Had to go through {iterations} iterations")
         return results
     
     
     def add_airport(self, icao):
         """Makes a new aiport object from the airport with the provided icao code and returns it"""
-        self.cursor.execute("SELECT * FROM airport WHERE ident = ?",(icao,))
+        self.cursor.execute("SELECT * FROM airport JOIN country ON airport.iso_country = country.iso_country WHERE ident = ?",(icao,))
         data = self.cursor.fetchone()
         airport = Airport(data)
         return airport
@@ -82,7 +81,7 @@ class Db_handler():
         
     def add_airplane(self, airport, carrier, type, name):
         self.cursor.execute("INSERT INTO plane (carrier_id, airport_id, type, name) VALUES (?, ?, ?, ?)",(carrier.id, airport, type, name))
-        self.conn.commit()
+        self.conn.commit() 
         
     def exit(self):
         self.conn.close()
