@@ -7,9 +7,14 @@ class Airplane():
         self.carrier_id = carrier_id
         stats = cfg.PLANES.get(self.type)
         self.range = stats.get("range")
+        self.type_name = stats.get("name")
         self.fuel_consumption = stats.get("fuel_consumption")
         self.passenger_capacity = stats.get("passenger_capacity")
 
+    def __str__(self) -> str:
+        string = f"{self.type_name}\nRange: {self.range} "
+        return string
+        
     def consume_fuel(self, route, carrier) -> bool:
         """Subtracts the correct quantity of fuel from the carrier's total fuel. Calls self.crash if the plane runs out of fuel
             Args:

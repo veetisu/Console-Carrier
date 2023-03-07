@@ -3,13 +3,14 @@ import random
 import time
 from db_handler import Db_handler
 import os
-from gui_handler import UI
+from Prototyping.curse_gui import UI
 from carrier_handler import Carrier
 from airplane import Airplane
+import curses
 
 db_handler = Db_handler()
 
-ui = UI()
+ui : UI = curses.wrapper(UI)
 
 class App():
     def __init__(self):
@@ -41,6 +42,9 @@ class App():
         carrier = Carrier("DummyCarrier","EFHK")
         airport = db_handler.add_airport("EFHK")
         plane = Airplane(carrier.id,"C172",airport)
+        plane2 = Airplane(carrier.id,"C172",airport)
+        planes = [plane, plane2]
+        ui.display_planes(planes)
         while True:
             routes = db_handler.get_next_routes(plane)
 
