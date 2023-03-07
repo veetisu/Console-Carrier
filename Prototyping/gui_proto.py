@@ -1,6 +1,7 @@
 import curses
 from curses import wrapper
 import time
+
 import atexit
 
 class GUI_Handler():
@@ -9,6 +10,7 @@ class GUI_Handler():
     stdscr = curses.initscr()
 
     # A function which creates a base for a GUI-menu, with attributes for the button names, etc
+
 
     def updateMainHUD(self, column1_Title, column2_Title, column1_elements, column2_elements):
         """Updates the main window to correspond to the current screen and attributes that need to be displayed."""
@@ -47,13 +49,16 @@ class Screens():
         for i in "Console Carrier":
             whole_name.append(i)
             printable_name = "".join(whole_name)
+
             GUI_Handler.stdscr.addstr(10, 10, str(printable_name),
               curses.A_REVERSE)
+
             GUI_Handler.stdscr.refresh()
             time.sleep(0.1)
         time.sleep(3)
 
     # Where the game asks for the airport
+
     def initial_setup(self):
         print("Setup")
     
@@ -74,3 +79,4 @@ gui_handler = GUI_Handler()
 atexit.register(gui_handler.curses_off)
 screens = Screens()
 screens.main_screen()
+

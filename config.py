@@ -20,8 +20,8 @@ vip_chance = 0.2
 PLANES = {
     "C172" : {
         "name": "Cessna-172",
-        #range in nautical miles!!
         "range": 1185,
+        "cruise_speed": 226,
         "passenger_capacity":3,
         #Litres per km
         "fuel_consumption": 1

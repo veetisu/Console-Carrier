@@ -24,6 +24,7 @@ import random
 import time
 from db_handler import Db_handler
 import os
+
 from carrier_handler import Carrier
 from airplane import Airplane
 import pickle
@@ -72,6 +73,7 @@ class App():
         atexit.register(carrier.save) 
           
         airport = db_handler.add_airport("EFHK")
+        
         plane = Airplane(carrier.id,"C172",airport,"Hilavitkutin")
         plane2 = Airplane(carrier.id,"C172",airport,"Lentohärpätin")
         plane3 = Airplane(carrier.id,"C172",airport)
