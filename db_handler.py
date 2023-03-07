@@ -57,6 +57,7 @@ class Db_handler():
         print(f"Had to go through {iterations} iterations")
         return results
     
+    
     def add_airport(self, icao):
         """Makes a new aiport object from the airport with the provided icao code and returns it"""
         self.cursor.execute("SELECT * FROM airport WHERE ident = ?",(icao,))
@@ -75,9 +76,9 @@ class Db_handler():
         self.cursor.execute("SELECT COUNT(*) FROM carrier")
         result = self.cursor.fetchone()
         if result == 0:
-            False
+            return False
         else:
-            True
+            return True
         
     def add_airplane(self, airport, carrier, type, name):
         self.cursor.execute("INSERT INTO plane (carrier_id, airport_id, type, name) VALUES (?, ?, ?, ?)",(carrier.id, airport, type, name))
