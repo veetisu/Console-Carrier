@@ -33,12 +33,11 @@ db_handler = Db_handler()
 
 ui = UI()
 
-
 class App():
     def __init__(self):
         self.running = True
         self.gamestate = "Not set yet"
-        
+        ui.splash_screen()
         
     def run(self):
 
@@ -70,7 +69,6 @@ class App():
                 #waiting?
                 #choose/menu
                 #Game over
-                
 
     def load_carrier(self):
         """Loads carrier from file using pickles. Returns carrier object if found and False otherwise. """
@@ -80,12 +78,9 @@ class App():
             return carrier
         except Exception:
             return False
-    
-
 
 app = App()
 #app.run()
 db_handler.add_airport("EFHK")
 app.run()
 db_handler.exit()
-
