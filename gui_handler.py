@@ -40,6 +40,7 @@ class UI:
         time.sleep(1)
         airplane_type = int(input("Choose one of the planes (1/2/3): "))
         airports = db_handler.get_starting_airports()
+        os.system('cls')
         for index, airport in enumerate(airports):
             print(f"{index+1}. {airport[0]}, {airport[1]}")
         airport_input = int(input("\nChoose the starting airport for your carrier(1/2/3...): "))
@@ -84,3 +85,4 @@ class UI:
         print("The ultimate aviation management experience")
         time.sleep(1)
         print("\nBy Antto Salo & Veeti Sundqvist")
+        time.sleep(3)
