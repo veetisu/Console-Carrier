@@ -1,8 +1,10 @@
 import geopy
 import config as cfg
 import random
+import os
 #import below not completely necessary
 from airplane import Airplane
+from datetime import datetime
 
         
 class Airport():
@@ -46,14 +48,9 @@ class Route():
         self.fuel_required = self.plane.fuel_consumption * self.route_lenght
         self.flight_time = (self.route_lenght/plane.cruise_speed)*cfg.flight_time_multiplier
         
-    def fly(self, plane, carrier) -> None:
-        """This is the method that shall be called when you want to fly the route. 
-        This method will handle all the different tasks associated with the flying (Fuel consumption, money, etc.)"""
-        #Needs more work, prob needs to return something
-        enough_fuel = self.plane.consume_fuel(self, carrier)
-        if not enough_fuel:
-            return
+    def take_off(self):
         if self.has_vip and self.vip_accepted == None:
+            os.system("cls")
             print(f"Theres a VIP available for this flight:")
             print(f"{self.vip.name}: {self.vip.vip_message}")
             accept_input = input("Do you accept this VIP? (y/n): ")
@@ -61,10 +58,27 @@ class Route():
                 self.vip_accepted = True
             if accept_input == "n":
                 self.vip_accepted = False
+        input("Press enter to continue")
+        self.take_off_time = datetime.now()
+        self.elapsed_time = 0
+        
+    def fly(self, plane, carrier, app) -> None:
+        """This is the method that shall be called when you want to fly the route.
+        This method will handle all the different tasks associated with the flying (Fuel consumption, money, etc.)"""
+        #Needs more work, prob needs to return something
+        self.elapsed_time = datetime.now()-self.take_off_time
+        self.elapsed_time = self.elapsed_time.total_seconds()
+        if self.elapsed_time < self.flight_time:
+            return False
+        
+        enough_fuel = self.plane.consume_fuel(self, carrier)
+        if not enough_fuel:
+            return
         plane.airport = self.arrival_airport
         total_money = self.total_money()     
         carrier.money += total_money
         self.flown = True
+        app.gamestate = "flight_menu"
         returnstr = f"Flew safely to {self.arrival_airport.name}"
             
         if self.has_vip and self.vip_accepted:

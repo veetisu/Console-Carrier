@@ -1,5 +1,5 @@
 MAX_AIRPORTS_PER_SEARCH = 5
-STARTING_FUEL = 100000
+STARTING_FUEL = 10000
 STARTING_MONEY = 100
 
 # Parameters for calculating amount of passengers on a given airport

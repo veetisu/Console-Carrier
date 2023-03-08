@@ -55,10 +55,13 @@ class UI:
             
         }
         return carrier
-    def main_menu(self, carrier_name, plane, cash, text_box):
-        print(f"{carrier_name}                  {cash}\n{plane}")
+    def main_menu(self, carrier):
+        cprint(f"\n\nMAIN MENU               TOTAL FUEL: {carrier.fuel:.0f}       TOTAL MONEY: {carrier.money:.0f}\n","black","on_white")
+        for index, plane in enumerate(carrier.airplanes):
+            cprint(f"{index+1}. {plane.name}\nType: {plane.type_name}\nLocation: {plane.airport.name}, {plane.airport.country_name}\n")
+        input("Press enter to continue")
         
-    def setup_screen(self, carrier, plane):
+    def setup_screen(self, carrier, plane, app):
         os.system("cls")
         cprint(f"\n\nFLIGHT SELECTION SCREEN               TOTAL FUEL: {carrier.fuel:.0f}       TOTAL MONEY: {carrier.money:.0f}\n","black","on_white")
         print(f"You have selected {plane.name} of type {plane.type_name} located at {plane.airport.name}\nThis airplane can carry a total of {plane.passenger_capacity} passengers\n")
@@ -75,9 +78,66 @@ class UI:
             print(f"    Fuel required: {route.fuel_required:.0f} l")
             print("\n")
         choice = int(input("Choose an airport: "))
-        print(routes[choice-1].fly(plane,carrier))
-        input("Press enter to continue")
+        routes[choice-1].take_off()
+        app.gamestate = "waiting"
+        return routes[choice-1]
         
+
+    def progress_bar(self, percent, bar_len=20):
+        filled_len = int(round(bar_len * percent))
+        bar = '=' * filled_len + '-' * (bar_len - filled_len)
+        return f'|{bar}| {percent:.0%}'
+
+    def waiting(self, route, plane, carrier, app):
+        clear = lambda: os.system('cls' if os.name == 'nt' else 'clear')
+        airplane = [
+            "                      ___",
+            "                      \\ \\",
+            "                       \\ `\\",
+            "                        \\  \\",
+            "                         \\  `\\",
+            " ___                      \\    \\",
+            "|    \\                     \\    `\\",
+            "|_____\                     \\     \\",
+            "|______\\                     \\     `\\",
+            "|       \\                     \\      \\",
+            "|      __\\__---------------------------------._.",
+            "__|---~~~__o_o_o_o_o_o_o_o_o_o_o_o_o_o_o_o_o_o_[][\__",
+            "|___                         /~      )                \\__",
+            "    ~~~---..._______________/      ,/_________________/",
+            "                           /      /",
+            "                          /     ,/",
+            "                         /     /",
+            "                        /    ,/",
+            "                       /    /",
+            "                      //  ,/",
+            "                     //  /",
+            "                    // ,/",
+            "                   //_/"
+        ]
+
+        pos = 0
+
+        while app.gamestate == "waiting":
+            clear()
+            for line in airplane:
+                # Add spaces to the beginning of the line to move the airplane
+                # and remove the excess characters on the right side
+                print(" " * pos + line[:os.get_terminal_size().columns - pos])
+            pos += 1
+            if pos > os.get_terminal_size().columns:
+                pos = 0
+            print("\n\n\n")
+            percent = route.elapsed_time / route.flight_time
+            print(self.progress_bar(percent))
+            fly_return = route.fly(plane, carrier, app)
+            time.sleep(0.04)
+        # Print iterations progress
+            if fly_return != False and fly_return != None:
+                print(fly_return)
+                input("Press enter to continue")
+
+            
     def splash_screen(self):
         os.system('cls')
         print("Console Carrier")
@@ -86,3 +146,4 @@ class UI:
         time.sleep(1)
         print("\nBy Antto Salo & Veeti Sundqvist")
         time.sleep(3)
+        os.system('cls')

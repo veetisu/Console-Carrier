@@ -33,11 +33,13 @@ db_handler = Db_handler()
 
 ui = UI()
 
+ENVIRONMENT = "development"
 class App():
     def __init__(self):
         self.running = True
         self.gamestate = "Not set yet"
-        ui.splash_screen()
+        if ENVIRONMENT != "development":
+            ui.splash_screen()
         
     def run(self):
 
@@ -45,7 +47,7 @@ class App():
         if not self.carrier:
             self.gamestate = "setup"
         else:
-            self.gamestate = "flight_menu"
+            self.gamestate = "flight_menu" 
             atexit.register(self.carrier.save)            
             
         while self.running:    
@@ -57,17 +59,19 @@ class App():
                 
             if self.gamestate == "main_menu":
             #WORKS WITH ONLY ONE PLANE
-                ui.main_menu()
+                ui.main_menu(self.carrier)
             if self.gamestate == "flight_menu":
-                selected_airplane = self.carrier.airplanes[0]
-                ui.setup_screen(self.carrier, selected_airplane)
+                self.selected_airplane = self.carrier.airplanes[0]
+                self.selected_route = ui.setup_screen(self.carrier, self.selected_airplane, self)
+                
             if self.gamestate == "menu":
                 pass
-            
+            if self.gamestate == "waiting":
+                ui.waiting(self.selected_route, self.selected_airplane, self.carrier, self)
             #Gamestates
                 #initializing
                 #waiting?
-                #choose/menu
+                #choose/menu 
                 #Game over
 
     def load_carrier(self):

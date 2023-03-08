@@ -3,7 +3,7 @@ class Airplane():
     def __init__(self,carrier_id, type, airport, name = "Airplane"):
         self.type = type
         self.name  = name
-        # airport is a Aiport object
+        # airport is a Airport object
         self.airport = airport
         self.carrier_id = carrier_id
         stats = cfg.PLANES.get(self.type)
