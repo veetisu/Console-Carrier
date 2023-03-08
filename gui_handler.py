@@ -3,8 +3,20 @@ import os
 import random
 from db_handler import Db_handler
 from carrier_handler import Carrier
+from termcolor import colored, cprint
+
 db_handler = Db_handler()
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 class UI:
 
     def __init__(self):
@@ -47,12 +59,12 @@ class UI:
         
     def setup_screen(self, carrier, plane):
         os.system("cls")
-        print(f"\n\n FLIGHT SELECTION SCREEN               TOTAL FUEL: {carrier.fuel:.0f}       TOTAL MONEY: {carrier.money:.0f}\n")
+        cprint(f"\n\nFLIGHT SELECTION SCREEN               TOTAL FUEL: {carrier.fuel:.0f}       TOTAL MONEY: {carrier.money:.0f}\n","black","on_white")
         print(f"You have selected {plane.name} of type {plane.type_name} located at {plane.airport.name}\nThis airplane can carry a total of {plane.passenger_capacity} passengers\n")
         print("Please select a airport you would like to fly to: ")
         routes = db_handler.get_next_routes(plane)
         for index, route in enumerate(routes):
-            print(f"{index+1}. {route.arrival_airport.name} in {route.arrival_airport.country_name}")
+            cprint(f"{index+1}. {route.arrival_airport.name} in {route.arrival_airport.country_name}",attrs=["reverse"])
             print(f"    Lenght: {route.route_lenght:.0f} km")
             print(f"    Passengers available: {route.departure_airport.airport_passengers()}")
             vip_available = "NO"

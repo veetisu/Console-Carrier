@@ -13,6 +13,7 @@ airport_passenger_multiplier = {
     "closed" : 0
 }
 money_per_passenger_per_km = 1
+flight_time_multiplier = 1
 
 vip_chance = 0.2
 

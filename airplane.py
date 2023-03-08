@@ -11,6 +11,7 @@ class Airplane():
         self.type_name = stats.get("name")
         self.fuel_consumption = stats.get("fuel_consumption")
         self.passenger_capacity = stats.get("passenger_capacity")
+        self.cruise_speed = stats.get("cruise_speed")
 
     def __str__(self) -> str:
         string = f"{self.type_name}\nRange: {self.range} "

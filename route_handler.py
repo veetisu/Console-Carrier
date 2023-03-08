@@ -44,6 +44,7 @@ class Route():
         self.has_vip = self.generate_vip()
         self.vip_accepted = None
         self.fuel_required = self.plane.fuel_consumption * self.route_lenght
+        self.flight_time = (self.route_lenght/plane.cruise_speed)*cfg.flight_time_multiplier
         
     def fly(self, plane, carrier) -> None:
         """This is the method that shall be called when you want to fly the route. 
