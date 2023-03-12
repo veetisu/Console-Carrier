@@ -77,7 +77,10 @@ class UI:
             print(f"    VIP available: {vip_available}")
             print(f"    Fuel required: {route.fuel_required:.0f} l")
             print("\n")
-        choice = int(input("Choose an airport: "))
+        choice ="not set yet"
+        while choice not in ["1","2","3","4","5"]:
+            choice = input("Choose an airport: ")
+        choice = int(choice)
         routes[choice-1].take_off()
         app.gamestate = "waiting"
         return routes[choice-1]

@@ -53,11 +53,13 @@ class Route():
             os.system("cls")
             print(f"Theres a VIP available for this flight:")
             print(f"{self.vip.name}: {self.vip.vip_message}")
-            accept_input = input("Do you accept this VIP? (y/n): ")
-            if accept_input == "y":
-                self.vip_accepted = True
-            if accept_input == "n":
-                self.vip_accepted = False
+            accept_input = ""
+            while accept_input not in ["y","n","Y","N"]:
+                accept_input = input("Do you accept this VIP? (y/n): ")
+                if accept_input == "y":
+                    self.vip_accepted = True
+                if accept_input == "n":
+                    self.vip_accepted = False
         input("Press enter to continue")
         self.take_off_time = datetime.now()
         self.elapsed_time = 0
