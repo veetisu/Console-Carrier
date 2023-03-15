@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "C:/Python/Python311/Lib/curses"
+]
+}

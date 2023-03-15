@@ -29,6 +29,7 @@ class Menu(object):
         while True:
             self.window.refresh()
             curses.doupdate()
+            current_row = 1
             for index, item in enumerate(self.items):
                 if index == self.position:
                     mode = curses.A_REVERSE
@@ -36,9 +37,14 @@ class Menu(object):
                     mode = curses.A_NORMAL
 
                 msg = "%d. %s" % (index, item[0])
-                self.window.addstr(1 + index, 1, msg, mode)
+                msg_rows = msg.count("\n")
+                self.window.addstr(current_row, 1, msg, mode)
+                current_row += msg_rows + 1
 
             key = self.window.getch()
+
+            if key == curses.KEY_DOWN:
+                self.navigate(1)
 
             if key in [curses.KEY_ENTER, ord("\n")]:
                 if self.position == len(self.items) - 1:
@@ -46,11 +52,8 @@ class Menu(object):
                 else:
                     self.items[self.position][1]()
 
-            elif key == curses.KEY_UP:
+            if key == curses.KEY_UP:
                 self.navigate(-1)
-
-            elif key == curses.KEY_DOWN:
-                self.navigate(1)
 
         self.window.clear()
         self.panel.hide()
@@ -58,22 +61,15 @@ class Menu(object):
         curses.doupdate()
 
 
-class MyApp(object):
+class UI(object):
     def __init__(self, stdscreen):
         self.screen = stdscreen
         curses.curs_set(0)
 
-        submenu_items = [("beep", curses.beep), ("flash", curses.flash)]
-        submenu = Menu(submenu_items, self.screen)
+    def display_planes(self, planes):
+        plane_items = []
+        for plane in planes:
+            plane_items.append((plane.__str__(), curses.flash))
+        plane_menu = Menu(plane_items, self.screen)
+        plane_menu.display()
 
-        main_menu_items = [
-            ("beep", curses.beep),
-            ("flash", curses.flash),
-            ("submenu", submenu.display),
-        ]
-        main_menu = Menu(main_menu_items, self.screen)
-        main_menu.display()
-
-
-if __name__ == "__main__":
-    curses.wrapper(MyApp)
