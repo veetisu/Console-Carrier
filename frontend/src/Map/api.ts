@@ -12,3 +12,12 @@ export async function fetchAirportCoords(code: string): Promise<[number, number]
 	const {latitude, longitude} = JSON.parse(data.replace(/'/g, '"'));
 	return [latitude, longitude];
 }
+export const fetchRoute = async () => {
+	try {
+		const response = await fetch('http://127.0.0.1:5000/route');
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.error('Error fetching route:', error);
+	}
+};

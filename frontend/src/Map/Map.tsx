@@ -2,9 +2,10 @@ import React, {useState, useEffect} from 'react';
 import {MapContainer, TileLayer, Marker, Popup, useMap} from 'react-leaflet';
 import L, {latLngBounds, LatLngBoundsLiteral} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import {fetchAirports, fetchAirportCoords} from './api';
+import {fetchAirports, fetchAirportCoords, fetchRoute} from './api';
 import Navbar from '../components/TopBar/TopBar';
 import './Map.css';
+import TrackingMarker from './TrackingMarker';
 
 const baseURL = 'http://127.0.0.1:5000';
 
@@ -16,6 +17,11 @@ interface Marker {
 const customIcon = L.icon({
 	iconUrl: 'img/airport.png',
 	iconSize: [46, 46]
+});
+const airplaneIcon = L.icon({
+	iconUrl: 'img/black-plane.png',
+	iconSize: [46, 46],
+	iconAnchor: [23, 23]
 });
 
 interface MapProps {
@@ -39,6 +45,17 @@ function App() {
 		[-90, -180],
 		[90, 180]
 	];
+
+	const [route, setRoute] = useState<any>(null);
+
+	useEffect(() => {
+		const getRoute = async () => {
+			const routeData = await fetchRoute();
+			setRoute(routeData);
+			console.log(routeData);
+		};
+		getRoute();
+	}, []);
 
 	useEffect(() => {
 		const getAirportPosition = async () => {
@@ -77,6 +94,7 @@ function App() {
 						attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
 					});
 				})}
+				{route && <TrackingMarker positions={[route.departure_coords, route.arrival_coords]} icon={airplaneIcon} transitionTime={route.flight_time * 1000} />}
 			</MapContainer>
 		</>
 	);
