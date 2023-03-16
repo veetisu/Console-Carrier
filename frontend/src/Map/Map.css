@@ -1,0 +1,6 @@
+.map-container {
+	height: calc(100vh - 37px);
+}
+body {
+	overflow: hidden;
+}
