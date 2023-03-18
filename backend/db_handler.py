@@ -57,16 +57,25 @@ class Db_handler():
         return results
     
     def get_coords(self, icao):
-        self.cursor.execute("SELECT latitude_deg, longitude_deg FROM airport WHERE ident=?",(icao,))
+        self.cursor.execute(f"SELECT latitude_deg, longitude_deg FROM airport WHERE ident={icao}")
         data = self.cursor.fetchone()
         data = {"latitude" : data[0], "longitude":data[1]}
         return str(data)
+
+    def get_all_airports(self):
+        type_filter = ("large_airport","KK")
+        self.cursor.execute("SELECT latitude_deg, longitude_deg FROM airport WHERE type IN {}".format(type_filter))
+        data = self.cursor.fetchall()
+        return data
     
     def add_airport(self, icao):
         """Makes a new aiport object from the airport with the provided icao code and returns it"""
         self.cursor.execute("SELECT * FROM airport JOIN country ON airport.iso_country = country.iso_country WHERE ident = ?",(icao,))
         data = self.cursor.fetchone()
-        airport = Airport(data)
+        try:
+            airport = Airport(data)
+        except:
+            print("Failed to get airport data from db for code: ",icao)
         return airport
     
     def add_carrier(self,carrier):

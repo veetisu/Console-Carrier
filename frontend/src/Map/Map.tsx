@@ -65,6 +65,13 @@ function App() {
 		};
 		getAirportPosition();
 	}, []);
+	useEffect(() => {
+		const getAirports = async () => {
+			const fetchedAirports = await fetchAirports();
+			setAirports(fetchedAirports);
+		};
+		getAirports();
+	}, []);
 
 	return (
 		<>

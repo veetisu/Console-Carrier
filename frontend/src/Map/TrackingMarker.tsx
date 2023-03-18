@@ -3,6 +3,7 @@ import React from 'react';
 import {Marker} from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet-rotatedmarker';
+import styled from 'styled-components';
 
 function getHeading(fromLatLng, toLatLng) {
 	const fromLat = (fromLatLng.lat * Math.PI) / 180;
@@ -20,6 +21,7 @@ interface TrackingMarkerProps {
 	positions: L.LatLngExpression[];
 	icon: L.Icon;
 	transitionTime: number;
+	disappear: boolean;
 }
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -58,23 +60,22 @@ const TrackingMarker: React.FC<TrackingMarkerProps> = ({positions, icon, transit
 		const endPos = L.latLng(positions[1]);
 		const heading = getHeading(startPos, endPos);
 		const markerIcon = markerRef.current.getElement();
+		markerRef.current.setRotationAngle(270 + heading);
+
 		if (markerIcon) {
 			markerIcon.style.transform = `translate3d(-50%, -100%, 0) rotate(${heading}deg)`;
 		}
 	}
-	const startPos = L.latLng(positions[0]);
-	const endPos = L.latLng(positions[1]);
-	const heading = getHeading(startPos, endPos);
-	console.log(heading);
 
 	return (
-		<Marker
-			ref={markerRef}
-			position={currentPosition}
-			icon={icon}
-			zIndexOffset={1000} // Ensures the marker stays on top
-			rotationAngle={45}
-		/>
+		<div>
+			<Marker
+				ref={markerRef}
+				position={currentPosition}
+				icon={icon}
+				zIndexOffset={1000} // Ensures the marker stays on top
+			/>
+		</div>
 	);
 };
 

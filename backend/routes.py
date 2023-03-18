@@ -20,8 +20,8 @@ class Router:
             return response
         @self.router.route('/route')
         def route():
-            departure_airport = db_handler.add_airport("EFHK")
-            arrival_airport = db_handler.add_airport("ESSA")
+            departure_airport = db_handler.add_airport("EDDB")
+            arrival_airport = db_handler.add_airport("EFHK")
             plane = carrier.airplanes[0]
 
             route = Route(departure_airport, arrival_airport, plane)
@@ -37,6 +37,9 @@ class Router:
             response = jsonify(route_data)
             response.headers.add('Access-Control-Allow-Origin', '*')
             return response
-
+        @self.router.route('/airports')
+        def airports():
+            response = jsonify(db_handler.get_all_airports())
+            return response
     def run(self):
-        self.router.run(debug=True)
+        self.router.run(debug=False)
