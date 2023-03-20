@@ -1,0 +1,42 @@
+.modal {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 10000;
+}
+
+.modal-content {
+	width: 80%;
+	height: 80%;
+	background-color: gray;
+	padding: 20px;
+	border-radius: 5px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.image-container {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	margin-right: 10px;
+	width: 25%;
+}
+
+.stats-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+.plane {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+}
+.image-container img {
+	max-width: 100%;
+}

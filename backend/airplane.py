@@ -1,6 +1,7 @@
 import config as cfg
 class Airplane():
-    def __init__(self,carrier_id, type, airport, name = "Airplane"):
+    def __init__(self,carrier_id, type, airport,id, name = "Airplane"):
+        self.id = id
         self.type = type
         self.name  = name
         # airport is a Airport object

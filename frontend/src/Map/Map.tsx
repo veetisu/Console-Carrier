@@ -2,10 +2,14 @@ import React, {useState, useEffect} from 'react';
 import {MapContainer, TileLayer, Marker, Popup, useMap} from 'react-leaflet';
 import L, {latLngBounds, LatLngBoundsLiteral} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import {fetchAirports, fetchAirportCoords, fetchRoute} from './api';
-import Navbar from '../components/TopBar/TopBar';
+import {fetchAirports, fetchAirportCoords, fetchRoute, fetchCarrier, postRoute} from './api';
+import Navbar from '../components/TopBar/NavBar';
 import './Map.css';
 import TrackingMarker from './TrackingMarker';
+import Modal from '../components/TopBar/Modal/Modal';
+import Airport from './Airport';
+import Button from '../components/Button';
+import {Plane} from '../components/TopBar/Modal/Modal';
 
 const baseURL = 'http://127.0.0.1:5000';
 
@@ -38,7 +42,8 @@ function Map(props: MapProps) {
 }
 
 function App() {
-	const [airports, setAirports] = useState([]);
+	const [airports, setAirports] = useState<Airport[]>([]);
+
 	const [position, setPosition] = useState<[number, number] | undefined>(undefined);
 	const [center, setCenter] = useState<[number, number]>([45.4, -75.7]);
 	const maxBounds: LatLngBoundsLiteral = [
@@ -47,35 +52,64 @@ function App() {
 	];
 
 	const [route, setRoute] = useState<any>(null);
+	const [showModal, setShowModal] = useState(false);
+	const [modalContent, setModalContent] = useState<string | undefined>(undefined);
+	const [modalAirport, setModalAirport] = useState<Airport | undefined>(undefined);
+	const [carrier, setCarrier] = useState<object | null>(null);
+	const [selectedPlane, setSelectedPlane] = useState<Plane | null>(null);
 
 	useEffect(() => {
-		const getRoute = async () => {
-			const routeData = await fetchRoute();
-			setRoute(routeData);
-			console.log(routeData);
+		const getCarrier = async () => {
+			const carrierData = await fetchCarrier();
+			console.log(carrierData);
+
+			setCarrier(carrierData);
 		};
-		getRoute();
+		getCarrier();
 	}, []);
 
+	const handleItemClick = (type: string) => {
+		setShowModal(true);
+		setModalContent(type);
+	};
+
+	const handleCloseModal = () => {
+		setShowModal(false);
+		setModalContent(undefined);
+	};
+	const handleAirportMarkerClick = (airport: Airport) => {
+		setShowModal(true);
+		setModalContent('airport');
+		setModalAirport(airport);
+	};
+	const handlePlaneSelect = (plane: Plane) => {
+		setSelectedPlane(plane);
+		setShowModal(false);
+		setModalContent('flight_selection');
+	};
+	const handleFly = (airport: Airport) => {
+		const plane = selectedPlane;
+		postRoute(plane.airport.icao, airport.ident, plane.id);
+		setSelectedPlane(null);
+	};
+
+	async function createAirportObjects(): Promise<Airport[]> {
+		const airportsData = await fetchAirports();
+		const airports = airportsData.map((airportData) => new Airport(...Object.values(airportData)));
+		return airports;
+	}
+
 	useEffect(() => {
-		const getAirportPosition = async () => {
-			const coords = await fetchAirportCoords('EFHK');
-			setPosition(coords);
-			setCenter(coords);
-		};
-		getAirportPosition();
-	}, []);
-	useEffect(() => {
-		const getAirports = async () => {
-			const fetchedAirports = await fetchAirports();
-			setAirports(fetchedAirports);
-		};
-		getAirports();
+		async function loadAirports() {
+			const airports = await createAirportObjects();
+			setAirports(airports);
+		}
+		loadAirports();
 	}, []);
 
 	return (
 		<>
-			<Navbar />
+			<Navbar carrier={carrier} onClick={handleItemClick} />
 			<MapContainer
 				className="map-container" // Update the className to use the Map.css rule
 				center={center}
@@ -90,10 +124,15 @@ function App() {
 				{position && <Marker position={position} icon={customIcon} />}
 
 				{airports.map((airport) => {
-					const {latitude, longitude} = airport;
+					const latitude = airport.latitude_deg;
+					const longitude = airport.longitude_deg;
 					return (
 						<Marker position={[latitude, longitude]} icon={customIcon}>
-							<Popup></Popup>
+							<Popup>
+								{airport.name}
+								<br />
+								{selectedPlane ? <Button onClick={() => handleFly(airport)}>Fly here</Button> : <Button onClick={() => handleAirportMarkerClick(airport)}>More</Button>}
+							</Popup>
 						</Marker>
 					);
 					var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
@@ -103,8 +142,30 @@ function App() {
 				})}
 				{route && <TrackingMarker positions={[route.departure_coords, route.arrival_coords]} icon={airplaneIcon} transitionTime={route.flight_time * 1000} />}
 			</MapContainer>
+			{showModal && (
+				<Modal onClose={handleCloseModal} planes={carrier.airplanes} type={modalContent} airport={modalAirport} onPlaneSelect={handlePlaneSelect}>
+					<div>HELLO</div>
+				</Modal>
+			)}
 		</>
 	);
 }
 
 export default App;
+/* 	useEffect(() => {
+	const getRoute = async () => {
+		const routeData = await fetchRoute();
+		setRoute(routeData);
+		console.log(routeData);
+	};
+	getRoute();
+}, []);
+
+useEffect(() => {
+	const getAirportPosition = async () => {
+		const coords = await fetchAirportCoords('EFHK');
+		setPosition(coords);
+		setCenter(coords);
+	};
+	getAirportPosition();
+}, []); */

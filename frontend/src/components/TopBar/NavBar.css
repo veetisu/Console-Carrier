@@ -1,0 +1,27 @@
+.card {
+	background-color: #333;
+	border: none;
+	border-radius: 0.5rem;
+	transition: background-color 0.2s ease-in-out;
+}
+
+.card:hover {
+	background-color: #444;
+}
+
+.card-body {
+	padding: 0.5rem 1rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.card-body img {
+	margin-right: 0.5rem;
+}
+
+.ns {
+	display: flex !important;
+	align-items: center;
+	color: white !important;
+}

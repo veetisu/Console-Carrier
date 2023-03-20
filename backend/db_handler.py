@@ -64,7 +64,7 @@ class Db_handler():
 
     def get_all_airports(self):
         type_filter = ("large_airport","KK")
-        self.cursor.execute("SELECT latitude_deg, longitude_deg FROM airport WHERE type IN {}".format(type_filter))
+        self.cursor.execute("SELECT * FROM airport WHERE type IN {}".format(type_filter))
         data = self.cursor.fetchall()
         return data
     
@@ -96,6 +96,7 @@ class Db_handler():
     def add_airplane(self, airport, carrier, type, name):
         self.cursor.execute("INSERT INTO plane (carrier_id, airport_id, type, name) VALUES (?, ?, ?, ?)",(carrier.id, airport, type, name))
         self.conn.commit() 
+        return self.cursor.lastrowid
         
     def exit(self):
         self.conn.close()

@@ -22,9 +22,9 @@ class Carrier():
         db_handler.add_carrier(self)
         
     def new_plane(self, type, airplane_name="Airplane"):
-        db_handler.add_airplane(self.headquarters,self,type,airplane_name)
+        id = db_handler.add_airplane(self.headquarters,self,type,airplane_name)
         airport = db_handler.add_airport(self.headquarters)
-        self.airplanes.append(Airplane(self.id, type, airport))
+        self.airplanes.append(Airplane(self.id, type, airport, id))
         
     def update_resource(self, resource, amount):
     # Method to add / remove given amount of resources
