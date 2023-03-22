@@ -10,6 +10,10 @@ import Modal from '../components/TopBar/Modal/Modal';
 import Airport from './Airport';
 import Button from '../components/Button';
 import {Plane} from '../components/TopBar/Modal/Modal';
+import 'jquery/dist/jquery.min.js';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
+import 'bootstrap/dist/css/bootstrap.css';
 
 const baseURL = 'http://127.0.0.1:5000';
 
@@ -57,6 +61,7 @@ function App() {
 	const [modalAirport, setModalAirport] = useState<Airport | undefined>(undefined);
 	const [carrier, setCarrier] = useState<object | null>(null);
 	const [selectedPlane, setSelectedPlane] = useState<Plane | null>(null);
+	const [selectedFlyPlane, setSelectedFlyPlane] = useState<Plane | null>(null);
 
 	useEffect(() => {
 		const getCarrier = async () => {
@@ -92,7 +97,10 @@ function App() {
 		postRoute(plane.airport.icao, airport.ident, plane.id);
 		setSelectedPlane(null);
 	};
-
+	const handleFlyButtonClick = () => {
+		setShowModal(true);
+		setModalContent('fly');
+	};
 	async function createAirportObjects(): Promise<Airport[]> {
 		const airportsData = await fetchAirports();
 		const airports = airportsData.map((airportData) => new Airport(...Object.values(airportData)));
@@ -143,10 +151,13 @@ function App() {
 				{route && <TrackingMarker positions={[route.departure_coords, route.arrival_coords]} icon={airplaneIcon} transitionTime={route.flight_time * 1000} />}
 			</MapContainer>
 			{showModal && (
-				<Modal onClose={handleCloseModal} planes={carrier.airplanes} type={modalContent} airport={modalAirport} onPlaneSelect={handlePlaneSelect}>
+				<Modal onClose={handleCloseModal} planes={carrier.airplanes} type={modalContent} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectFlyPlane={setSelectedFlyPlane}>
 					<div>HELLO</div>
 				</Modal>
 			)}
+			<button className="floating-fly-button" onClick={handleFlyButtonClick}>
+				FLY
+			</button>
 		</>
 	);
 }

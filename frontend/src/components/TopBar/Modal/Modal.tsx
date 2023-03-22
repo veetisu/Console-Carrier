@@ -2,6 +2,11 @@ import React from 'react';
 import './Modal.css';
 import Button from '../../Button';
 import Airport from '../../../Map/Airport';
+import {useState} from 'react';
+import {Form, Row, Col} from 'react-bootstrap';
+import SearchBox from './SearchBox';
+import {Continent, Size} from '../../../types/types';
+import {postSearch} from '../../../Map/api';
 
 interface ModalProps {
 	show: boolean;
@@ -37,14 +42,17 @@ export interface Plane {
 	passenger_capacity: number;
 	cruise_speed: number;
 }
-function handleClick(plane: Plane) {}
 
+function handleClick(plane: Plane) {}
+function handleSearch(searchTerm: string, selectedSizes: Size[], selectedContinents: Continent[]) {
+	postSearch();
+}
 const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSelect}) => {
 	return (
 		<div className="modal">
 			<div className="modal-content">
-				<button onClick={onClose} className="close-button">
-					Close
+				<button onClick={onClose} className="close-button btn btn-danger">
+					X
 				</button>
 				{type === 'planes' &&
 					planes.map((plane: Plane) => {
@@ -77,6 +85,65 @@ const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSel
 					<div className="w-100">
 						<div className="w-50"></div>
 						<div className="w-50"></div>
+					</div>
+				)}
+				{type === 'fly' && (
+					<div className="row">
+						<div className="col-md-6 fly-plane-select">
+							<div className="dropdown">
+								<a className="btn btn-secondary dropdown-toggle w-100" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+									Select a plane
+								</a>
+
+								<ul className="dropdown-menu w-90">
+									{planes.map((plane: Plane) => {
+										return (
+											<li>
+												<a
+													className="dropdown-item"
+													onClick={() => {
+														setSelectedFlyPlane(plane);
+													}}
+												>
+													Type: {plane.type_name}
+													<br></br>
+													Currently in: {plane.airport.name}
+												</a>
+											</li>
+										);
+									})}
+								</ul>
+								{selectedFlyPlane && (
+									<div className="row">
+										<div className="col-12">
+											<h5>Selected plane:</h5>
+										</div>
+										<div className="col-12 col-md-6 ">
+											<strong>{selectedFlyPlane.type_name}</strong>
+										</div>
+										<img className="" src={`../img/planes/${selectedFlyPlane.type}.png`} alt="" />
+										<div className="col-12 col-md-6 ">
+											<div>
+												<strong>Currently at:</strong> {selectedFlyPlane.airport.name}
+											</div>
+											<div>
+												<strong>Range:</strong> {selectedFlyPlane.range}
+											</div>
+											<div>
+												<strong>Passenger Capacity:</strong> {selectedFlyPlane.passenger_capacity}
+											</div>
+											<div>
+												<strong>Name:</strong> {selectedFlyPlane.name}
+											</div>
+										</div>
+									</div>
+								)}
+							</div>
+						</div>
+						<div className="col-md-6">
+							<h3>Select destination airport</h3>
+							<SearchBox onSearch={handleSearch}></SearchBox>
+						</div>
 					</div>
 				)}
 			</div>

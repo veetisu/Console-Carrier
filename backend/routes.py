@@ -1,6 +1,6 @@
 
 # router.py
-from flask import Flask, jsonify, Response, request
+from flask import Flask, jsonify, Response, request, g
 from route_handler import Route, Airport
 from flask_cors import CORS
 import sys
@@ -21,6 +21,21 @@ class CustomJSONEncoder(json.JSONEncoder):
             return obj.__dict__
         else:
             return super().default(obj)
+        
+class TimingMiddleware:
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        start_time = time.monotonic()
+        def custom_start_response(status, headers, exc_info=None):
+            elapsed_time = time.monotonic() - start_time
+            print(f"Request took {elapsed_time:.6f} seconds to complete.")
+            return start_response(status, headers, exc_info)
+        return self.app(environ, custom_start_response)
+
+# Add the middleware to your Flask app
+
 class Router:
     def __init__(self, carrier: Carrier, db_handler:Db_handler) -> None:
         self.router = Flask(__name__)
@@ -53,7 +68,8 @@ class Router:
             return response
         @self.router.route('/airports')
         def airports():
-            response = jsonify(db_handler.get_all_airports())
+            data = db_handler.get_all_airports()
+            response = jsonify(data)
             return response
         @self.router.route('/carrier')
         def get_carrier():
@@ -85,12 +101,15 @@ class Router:
 
             return json.dumps(route, cls=CustomJSONEncoder)
 
+
+
     def run(self):
-        self.router.run(debug=False)
+        self.router.run(debug=True)
         
 if __name__ == '__main__':
     db_handler = Db_handler()
     carrier = Carrier("HEOO", "EFHK")
     carrier.new_plane("C172")
-    router = Router(carrier,db_handler)
+    router = Router(carrier, db_handler)
+    router.router.wsgi_app = TimingMiddleware(router.router.wsgi_app)
     router.run()
