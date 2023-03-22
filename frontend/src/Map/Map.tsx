@@ -62,6 +62,7 @@ function App() {
 	const [carrier, setCarrier] = useState<object | null>(null);
 	const [selectedPlane, setSelectedPlane] = useState<Plane | null>(null);
 	const [selectedFlyPlane, setSelectedFlyPlane] = useState<Plane | null>(null);
+	const [searchResults, setSearchResults] = useState<Airport[] | false>(false);
 
 	useEffect(() => {
 		const getCarrier = async () => {
@@ -101,6 +102,9 @@ function App() {
 		setShowModal(true);
 		setModalContent('fly');
 	};
+	function handleSearch(searchResults: any) {
+		setSearchResults(searchResults);
+	}
 	async function createAirportObjects(): Promise<Airport[]> {
 		const airportsData = await fetchAirports();
 		const airports = airportsData.map((airportData) => new Airport(...Object.values(airportData)));
@@ -143,15 +147,11 @@ function App() {
 							</Popup>
 						</Marker>
 					);
-					var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
-						maxZoom: 20,
-						attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
-					});
 				})}
 				{route && <TrackingMarker positions={[route.departure_coords, route.arrival_coords]} icon={airplaneIcon} transitionTime={route.flight_time * 1000} />}
 			</MapContainer>
 			{showModal && (
-				<Modal onClose={handleCloseModal} planes={carrier.airplanes} type={modalContent} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectFlyPlane={setSelectedFlyPlane}>
+				<Modal onClose={handleCloseModal} planes={carrier.airplanes} type={modalContent} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectedFlyPlane={setSelectedFlyPlane} searchResults={searchResults} handleSearch={handleSearch}>
 					<div>HELLO</div>
 				</Modal>
 			)}
@@ -163,16 +163,8 @@ function App() {
 }
 
 export default App;
-/* 	useEffect(() => {
-	const getRoute = async () => {
-		const routeData = await fetchRoute();
-		setRoute(routeData);
-		console.log(routeData);
-	};
-	getRoute();
-}, []);
 
-useEffect(() => {
+/* useEffect(() => {
 	const getAirportPosition = async () => {
 		const coords = await fetchAirportCoords('EFHK');
 		setPosition(coords);

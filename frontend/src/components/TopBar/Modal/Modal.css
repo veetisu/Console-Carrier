@@ -50,3 +50,12 @@
 .fly-plane-select {
 	border-right: 2px solid black;
 }
+.scrollable-content {
+	height: calc(80% - 60px);
+	overflow-y: auto;
+	padding-right: 1rem;
+}
+
+.destination {
+	max-height: fit-content;
+}

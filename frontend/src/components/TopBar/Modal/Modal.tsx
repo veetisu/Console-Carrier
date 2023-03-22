@@ -15,6 +15,10 @@ interface ModalProps {
 	planes: any[];
 	airport?: Airport;
 	onPlaneSelect: (plane: Plane) => void;
+	selectedFlyPlane: Plane;
+	setSelectedFlyPlane: (plane: Plane) => void;
+	searchResults: Airport[];
+	handleSearch: (searchResults: any) => void;
 }
 
 export interface Plane {
@@ -44,12 +48,9 @@ export interface Plane {
 }
 
 function handleClick(plane: Plane) {}
-function handleSearch(searchTerm: string, selectedSizes: Size[], selectedContinents: Continent[]) {
-	postSearch();
-}
-const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSelect}) => {
+const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSelect, selectedFlyPlane, setSelectedFlyPlane, searchResults, handleSearch}) => {
 	return (
-		<div className="modal">
+		<div className="modal mx-0">
 			<div className="modal-content">
 				<button onClick={onClose} className="close-button btn btn-danger">
 					X
@@ -88,7 +89,7 @@ const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSel
 					</div>
 				)}
 				{type === 'fly' && (
-					<div className="row">
+					<div className="row h-100">
 						<div className="col-md-6 fly-plane-select">
 							<div className="dropdown">
 								<a className="btn btn-secondary dropdown-toggle w-100" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -140,9 +141,31 @@ const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSel
 								)}
 							</div>
 						</div>
-						<div className="col-md-6">
+						<div className="col-md-6 h-100">
 							<h3>Select destination airport</h3>
 							<SearchBox onSearch={handleSearch}></SearchBox>
+							<div className="scrollable-content">
+								<div className="list-group mt-3">
+									{searchResults &&
+										searchResults.map((airport) => {
+											return (
+												<div key={airport.id} className="list-group-item ">
+													<div className="row">
+														<div className="col-6">
+															<strong>Name:</strong> {airport.name}
+														</div>
+														<div className="col-3">
+															<strong>Type:</strong> {airport.type}
+														</div>
+														<div className="col-3">
+															<strong>Country:</strong> {airport.iso_country}
+														</div>
+													</div>
+												</div>
+											);
+										})}
+								</div>
+							</div>
 						</div>
 					</div>
 				)}

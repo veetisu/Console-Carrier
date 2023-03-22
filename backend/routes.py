@@ -101,6 +101,18 @@ class Router:
 
             return json.dumps(route, cls=CustomJSONEncoder)
 
+        @self.router.route('/search_airports', methods=['POST'])
+        def search_airports():
+            data = request.json
+            search_parameters = {
+                'search_term': data.get('searchTerm', None),
+                'continent': data.get('selectedContinents', None),
+                'size': data.get('selectedSizes', None),
+            }
+            results = db_handler.search_airports(search_parameters['search_term'],search_parameters['continent'],search_parameters['size'])
+            response = jsonify(results)
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
 
 
     def run(self):

@@ -2,9 +2,10 @@ import React, {useState} from 'react';
 import './Modal.css';
 import Button from '../../Button/Button';
 import {Continent, Size} from '../../../types/types';
+import {postSearch} from '../../../Map/api';
 
 interface SearchBoxProps {
-	onSearch: (searchTerm: string, selectedSizes: Size[], selectedContinents: Continent[]) => void;
+	onSearch: (data: any) => void;
 }
 
 const SearchBox: React.FC<SearchBoxProps> = ({onSearch}) => {
@@ -33,10 +34,14 @@ const SearchBox: React.FC<SearchBoxProps> = ({onSearch}) => {
 		}
 	};
 
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		onSearch(searchTerm, selectedSizes, selectedContinents);
+		const searchData = await postSearch(searchTerm, selectedSizes, selectedContinents);
+		onSearch(searchData);
 	};
+	function capitalize(s) {
+		return s[0].toUpperCase() + s.slice(1);
+	}
 
 	return (
 		<div className="container">
@@ -61,7 +66,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({onSearch}) => {
 											<li key={size}>
 												<label>
 													<input type="checkbox" value={size} checked={selectedSizes.includes(size)} onChange={handleSizeChange} />
-													{size}
+													{capitalize(size)}
 												</label>
 											</li>
 										))}
@@ -79,7 +84,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({onSearch}) => {
 											<li key={continent}>
 												<label>
 													<input type="checkbox" value={continent} checked={selectedContinents.includes(continent)} onChange={handleContinentChange} />
-													{continent}
+													{capitalize(continent)}
 												</label>
 											</li>
 										))}

@@ -97,6 +97,54 @@ class Db_handler():
         self.cursor.execute("INSERT INTO plane (carrier_id, airport_id, type, name) VALUES (?, ?, ?, ?)",(carrier.id, airport, type, name))
         self.conn.commit() 
         return self.cursor.lastrowid
+    
+    def search_airports(self, search_term=None, continents=None, sizes=None):
+        query = """
+        SELECT *
+        FROM airport
+        WHERE (name LIKE %s OR iata_code LIKE %s OR municipality LIKE %s)
+        """
+
+        if continents:
+            continent_mapping = {
+                'africa': 'AF',
+                'asia': 'AS',
+                'europe': 'EU',
+                'north-america': 'NA',
+                'south-america': 'SA',
+                'australia': 'OC'
+            }
+            continent_filter = ",".join(f"'{continent_mapping[continent]}'" for continent in continents)
+            query += f" AND continent IN ({continent_filter})"
+
+        if sizes:
+            size_mapping = {
+                'small': "'small_airport', 'heliport'",
+                'medium': "'medium_airport'",
+                'large': "'large_airport'",
+                'closed': "'closed'"
+            }
+            type_filter = ",".join(size_mapping[size] for size in sizes)
+            query += f" AND type IN ({type_filter})"
+
+            query += f" AND type IN ({type_filter})"
+
+
+
+
+        query += " ORDER BY name"
+
+        search_term = '%' + search_term + '%' if search_term else '%%'
+
+        with self.conn.cursor() as cursor:
+            cursor.execute(query, (search_term, search_term, search_term))
+            results = cursor.fetchall()
+
+        return results
+
+
+
+
         
     def exit(self):
         self.conn.close()
