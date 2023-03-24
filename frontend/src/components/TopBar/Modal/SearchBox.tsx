@@ -82,19 +82,17 @@ const SearchBox: React.FC<SearchBoxProps> = ({onSearch}) => {
 									<ul className="dropdown-menu" aria-labelledby="continentFilterDropdown">
 										{continents.map((continent) => (
 											<li key={continent}>
-												<label>
-													<input type="checkbox" value={continent} checked={selectedContinents.includes(continent)} onChange={handleContinentChange} />
-													{capitalize(continent)}
-												</label>
+												<input type="checkbox" value={continent} checked={selectedContinents.includes(continent)} onChange={handleContinentChange} />
+												<label>{capitalize(continent)}</label>
 											</li>
 										))}
 									</ul>
+									<button type="submit" className="btn btn-primary mx-5">
+										Search
+									</button>
 								</div>
 							</div>
 						</div>
-						<button type="submit" className="btn btn-primary">
-							Search
-						</button>
 					</form>
 				</div>
 			</div>

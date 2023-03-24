@@ -72,7 +72,6 @@ class Route():
         self.elapsed_time = self.elapsed_time.total_seconds()
         if self.elapsed_time < self.flight_time:
             return False
-        
         enough_fuel = self.plane.consume_fuel(self, carrier)
         if not enough_fuel:
             return
@@ -80,9 +79,7 @@ class Route():
         total_money = self.total_money()     
         carrier.money += total_money
         self.flown = True
-        app.gamestate = "flight_menu"
-        returnstr = f"Flew safely to {self.arrival_airport.name}"
-            
+        returnstr = f"Flew safely to {self.arrival_airport.name}"            
         if self.has_vip and self.vip_accepted:
             returnstr += f"\n{self.vip.result_message}"
             carrier.money += self.vip.value

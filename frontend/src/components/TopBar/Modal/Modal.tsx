@@ -19,6 +19,9 @@ interface ModalProps {
 	setSelectedFlyPlane: (plane: Plane) => void;
 	searchResults: Airport[];
 	handleSearch: (searchResults: any) => void;
+	destinationAirport: Airport;
+	setDestinationAirport: (airport: Airport) => void;
+	handleFly: () => void;
 }
 
 export interface Plane {
@@ -48,7 +51,7 @@ export interface Plane {
 }
 
 function handleClick(plane: Plane) {}
-const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSelect, selectedFlyPlane, setSelectedFlyPlane, searchResults, handleSearch}) => {
+const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSelect, selectedFlyPlane, setSelectedFlyPlane, searchResults, handleSearch, destinationAirport, setDestinationAirport, handleFly}) => {
 	return (
 		<div className="modal mx-0">
 			<div className="modal-content">
@@ -142,14 +145,14 @@ const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSel
 							</div>
 						</div>
 						<div className="col-md-6 h-100">
-							<h3>Select destination airport</h3>
+							{destinationAirport ? <h3>{destinationAirport.name}</h3> : <h3>Select destination airport</h3>}
 							<SearchBox onSearch={handleSearch}></SearchBox>
 							<div className="scrollable-content">
 								<div className="list-group mt-3">
 									{searchResults &&
 										searchResults.map((airport) => {
 											return (
-												<div key={airport.id} className="list-group-item ">
+												<div key={airport.id} className="list-group-item btn btn-primary" onClick={() => setDestinationAirport(airport)}>
 													<div className="row">
 														<div className="col-6">
 															<strong>Name:</strong> {airport.name}
@@ -165,6 +168,11 @@ const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSel
 											);
 										})}
 								</div>
+							</div>
+							<div className="mb-6">
+								<button onClick={handleFly} className="btn btn-primary float-end mr-6">
+									Fly
+								</button>
 							</div>
 						</div>
 					</div>

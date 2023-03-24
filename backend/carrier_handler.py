@@ -18,6 +18,7 @@ class Carrier():
         self.resources = ["fuel","money"]
         self.fuel = cfg.STARTING_FUEL
         self.money = cfg.STARTING_MONEY
+        self.active_routes = None
         
         db_handler.add_carrier(self)
         

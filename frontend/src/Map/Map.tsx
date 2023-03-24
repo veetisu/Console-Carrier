@@ -63,6 +63,7 @@ function App() {
 	const [selectedPlane, setSelectedPlane] = useState<Plane | null>(null);
 	const [selectedFlyPlane, setSelectedFlyPlane] = useState<Plane | null>(null);
 	const [searchResults, setSearchResults] = useState<Airport[] | false>(false);
+	const [destinationAirport, setDestinationAirport] = useState<Airport | false>(false);
 
 	useEffect(() => {
 		const getCarrier = async () => {
@@ -93,10 +94,17 @@ function App() {
 		setShowModal(false);
 		setModalContent('flight_selection');
 	};
-	const handleFly = (airport: Airport) => {
-		const plane = selectedPlane;
-		postRoute(plane.airport.icao, airport.ident, plane.id);
-		setSelectedPlane(null);
+	const handleFly = async () => {
+		const plane = selectedFlyPlane;
+
+		try {
+			const updatedCarrier = await postRoute(plane.airport.icao, destinationAirport.ident, plane.id);
+			setSelectedFlyPlane(null);
+			setDestinationAirport(false);
+			setCarrier(updatedCarrier);
+		} catch (error) {
+			console.error('Error in handleFly:', error);
+		}
 	};
 	const handleFlyButtonClick = () => {
 		setShowModal(true);
@@ -151,7 +159,7 @@ function App() {
 				{route && <TrackingMarker positions={[route.departure_coords, route.arrival_coords]} icon={airplaneIcon} transitionTime={route.flight_time * 1000} />}
 			</MapContainer>
 			{showModal && (
-				<Modal onClose={handleCloseModal} planes={carrier.airplanes} type={modalContent} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectedFlyPlane={setSelectedFlyPlane} searchResults={searchResults} handleSearch={handleSearch}>
+				<Modal onClose={handleCloseModal} planes={carrier.airplanes} type={modalContent} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectedFlyPlane={setSelectedFlyPlane} searchResults={searchResults} handleSearch={handleSearch} destinationAirport={destinationAirport} setDestinationAirport={setDestinationAirport} handleFly={handleFly}>
 					<div>HELLO</div>
 				</Modal>
 			)}

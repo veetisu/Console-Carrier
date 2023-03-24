@@ -34,16 +34,15 @@ export const fetchCarrier = async () => {
 	}
 };
 
-export const postRoute = (departure: string, arrival: string, plane_id: string) => {
+export const postRoute = (departure, arrival, plane_id) => {
 	const requestOptions = {
 		method: 'POST',
 		headers: {'Content-Type': 'application/json'},
-		body: JSON.stringify({departure: departure, arrival: arrival, plane_id: plane_id})
+		body: JSON.stringify({departure, arrival, plane_id})
 	};
 
-	fetch('http://localhost:5000/post-route', requestOptions)
+	return fetch('http://localhost:5000/post_route', requestOptions)
 		.then((response) => response.json())
-		.then((data) => console.log(data))
 		.catch((error) => console.error(error));
 };
 export const postSearch = async (searchTerm: string, selectedSizes: Size[], selectedContinents: Continent[]) => {

@@ -10,6 +10,8 @@ from carrier_handler import Carrier
 from airplane import Airplane
 import pickle
 import json
+from flask_socketio import SocketIO, emit
+
 
 class CustomJSONEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -39,6 +41,7 @@ class TimingMiddleware:
 class Router:
     def __init__(self, carrier: Carrier, db_handler:Db_handler) -> None:
         self.router = Flask(__name__)
+        self.socketio = SocketIO(self.router, cors_allowed_origins="*")
         # ... Other routes
         CORS(self.router, resources={r"*": {"origins": "*"}})
 
@@ -84,7 +87,7 @@ class Router:
             }
             return json.dumps(data, cls=CustomJSONEncoder)
 
-        @self.router.route('/post-route', methods=['POST'])
+        @self.router.route('/post_route', methods=['POST'])
         def post_route():
             data = request.json
             departure = data['departure']
@@ -98,7 +101,8 @@ class Router:
 
             route = Route(departure,arrival,plane)
             # Do something with the data
-
+            carrier.active_route = route
+            
             return json.dumps(route, cls=CustomJSONEncoder)
 
         @self.router.route('/search_airports', methods=['POST'])
@@ -113,10 +117,35 @@ class Router:
             response = jsonify(results)
             response.headers.add('Access-Control-Allow-Origin', '*')
             return response
-
+        @self.router.route('/fly', methods=['POST'])
+        def fly():
+            if carrier.active_route != None:
+                carrier.active_route.fly()
+                data = {
+                'name': carrier.name,
+                'airplanes': [plane.__dict__ for plane in carrier.airplanes],
+                'headquarters': carrier.headquarters,
+                'id': carrier.id,
+                'resources': carrier.resources,
+                'fuel': carrier.fuel,
+                'money': carrier.money,
+            }
+            return json.dumps(data, cls=CustomJSONEncoder)
+    def notify_frontend_carrier_updated():
+        data = {
+            'name': carrier.name,
+            'airplanes': [plane.__dict__ for plane in carrier.airplanes],
+            'headquarters': carrier.headquarters,
+            'id': carrier.id,
+            'resources': carrier.resources,
+            'fuel': carrier.fuel,
+            'money': carrier.money,
+        }
+        emit('carrier_updated', json.dumps(data, cls=CustomJSONEncoder), broadcast=True)
 
     def run(self):
-        self.router.run(debug=True)
+        self.socketio.run(self.router, debug=True)
+
         
 if __name__ == '__main__':
     db_handler = Db_handler()
