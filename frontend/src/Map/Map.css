@@ -6,7 +6,6 @@ body {
 }
 .floating-fly-button {
 	color: white;
-	-webkit-text-stroke: 2px black; /* width and color */
 	font-family: Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	font-size: 35px;
@@ -16,13 +15,27 @@ body {
 	z-index: 2000;
 	padding: 3vw;
 	border-radius: 50%;
-	border-color: #03045e;
-	border: 10px;
+	border: none;
 	background-color: #4b6abe;
-	-webkit-box-shadow: -13px 10px 7px 0px rgba(0, 0, 0, 0.75);
-	-moz-box-shadow: -13px 10px 7px 0px rgba(0, 0, 0, 0.75);
-	box-shadow: -13px 10px 7px 0px rgba(0, 0, 0, 0.75);
+	box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.3);
+	cursor: pointer;
+	transition: all 0.3s ease;
+	text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
 }
+
 .floating-fly-button:hover {
 	background-color: #6983c9;
+	transform: translateY(-3px);
+	box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.alerts-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	position: absolute;
+	top: 20%;
+	left: 0;
+	right: 0;
+	z-index: 20000;
 }

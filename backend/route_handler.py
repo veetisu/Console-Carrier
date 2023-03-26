@@ -38,9 +38,9 @@ class Route():
         self.plane = plane
         self.departure_airport = departure_airport
         self.arrival_airport = arrival_airport
-        self.depature_coords = (self.departure_airport.latitude, self.departure_airport.longitude)
+        self.departure_coords = (self.departure_airport.latitude, self.departure_airport.longitude)
         self.arrival_coords = (self.arrival_airport.latitude, self.arrival_airport.longitude)
-        self.route_lenght = geopy.distance.distance(self.depature_coords,self.arrival_coords).km
+        self.route_lenght = geopy.distance.distance(self.departure_coords,self.arrival_coords).km
         self.flown = False
         self.vip = None
         self.has_vip = self.generate_vip()
@@ -50,40 +50,32 @@ class Route():
         
     def take_off(self):
         if self.has_vip and self.vip_accepted == None:
-            os.system("cls")
-            print(f"Theres a VIP available for this flight:")
-            print(f"{self.vip.name}: {self.vip.vip_message}")
-            accept_input = ""
-            while accept_input not in ["y","n","Y","N"]:
-                accept_input = input("Do you accept this VIP? (y/n): ")
-                if accept_input == "y":
-                    self.vip_accepted = True
-                if accept_input == "n":
-                    self.vip_accepted = False
-        input("Press enter to continue")
+            return self.vip.vip_message
         self.take_off_time = datetime.now()
         self.elapsed_time = 0
         
-    def fly(self, plane, carrier, app) -> None:
+    def fly(self, plane, carrier) -> None:
         """This is the method that shall be called when you want to fly the route.
         This method will handle all the different tasks associated with the flying (Fuel consumption, money, etc.)"""
         #Needs more work, prob needs to return something
-        self.elapsed_time = datetime.now()-self.take_off_time
+        self.elapsed_time = datetime.now() - self.take_off_time
         self.elapsed_time = self.elapsed_time.total_seconds()
         if self.elapsed_time < self.flight_time:
             return False
         enough_fuel = self.plane.consume_fuel(self, carrier)
         if not enough_fuel:
-            return
+            return False
         plane.airport = self.arrival_airport
-        total_money = self.total_money()     
+        total_money = self.total_money()
         carrier.money += total_money
         self.flown = True
-        returnstr = f"Flew safely to {self.arrival_airport.name}"            
+        returnstr = f"Flew safely to {self.arrival_airport.name}"
         if self.has_vip and self.vip_accepted:
             returnstr += f"\n{self.vip.result_message}"
             carrier.money += self.vip.value
-        return(returnstr)
+        del self
+        return True
+
         
     def passengers(self) -> int:
         """Returns the number of passengers that will be onboard this flight"""

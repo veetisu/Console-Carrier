@@ -1,7 +1,8 @@
 const baseURL = 'http://localhost:5000';
-import {Plane} from '../components/TopBar/Modal/Modal';
+import {Plane} from '../components/Modal/Modal';
 import {Size, Continent} from './../types/types';
 import Airport from './Airport';
+import Carrier from '../types/carrier';
 
 export async function fetchAirports() {
 	const response = await fetch(baseURL + '/airports');
@@ -24,14 +25,40 @@ export const fetchRoute = async () => {
 		console.error('Error fetching route:', error);
 	}
 };
-export const fetchCarrier = async () => {
+
+export const fetchCarrier = async (): Promise<Carrier> => {
 	try {
 		const response = await fetch('http://127.0.0.1:5000/carrier');
+		const data = await response.json();
+		return new Carrier(data);
+	} catch (error) {
+		console.error('Error fetching carrier:', error);
+	}
+};
+
+export const fetchFuelPrice = async () => {
+	try {
+		const response = await fetch('http://127.0.0.1:5000/fuel_price');
 		const data = await response.json();
 		return data;
 	} catch (error) {
 		console.error('Error fetching route:', error);
 	}
+};
+export const postBuyFuel = (amount, carrierId) => {
+	const requestOptions = {
+		method: 'POST',
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify({amount: amount, carrierId: carrierId})
+	};
+
+	return fetch('http://localhost:5000/buy_fuel', requestOptions)
+		.then((response) => response.json())
+		.then((data) => {
+			// Create a Carrier instance from the received data
+			return new Carrier(data);
+		})
+		.catch((error) => console.error(error));
 };
 
 export const postRoute = (departure, arrival, plane_id) => {
@@ -45,6 +72,18 @@ export const postRoute = (departure, arrival, plane_id) => {
 		.then((response) => response.json())
 		.catch((error) => console.error(error));
 };
+export const postFly = () => {
+	const requestOptions = {
+		method: 'POST',
+		headers: {'Content-Type': 'application/json'},
+		body: ''
+	};
+
+	return fetch('http://localhost:5000/fly', requestOptions)
+		.then((response) => response.json())
+		.catch((error) => console.error(error));
+};
+
 export const postSearch = async (searchTerm: string, selectedSizes: Size[], selectedContinents: Continent[]) => {
 	const requestOptions = {
 		method: 'POST',

@@ -1,12 +1,13 @@
 import React from 'react';
 import './Modal.css';
-import Button from '../../Button';
-import Airport from '../../../Map/Airport';
+import Button from '../Button/Button';
+import Airport from '../../Map/Airport';
 import {useState} from 'react';
 import {Form, Row, Col} from 'react-bootstrap';
 import SearchBox from './SearchBox';
-import {Continent, Size} from '../../../types/types';
-import {postSearch} from '../../../Map/api';
+import {Continent, Size} from '../../types/types';
+import {postSearch} from '../../Map/api';
+import FuelView from './FuelView/FuelView';
 
 interface ModalProps {
 	show: boolean;
@@ -22,6 +23,8 @@ interface ModalProps {
 	destinationAirport: Airport;
 	setDestinationAirport: (airport: Airport) => void;
 	handleFly: () => void;
+	carrier: any;
+	setCarrier: (carrier: any) => void;
 }
 
 export interface Plane {
@@ -51,7 +54,7 @@ export interface Plane {
 }
 
 function handleClick(plane: Plane) {}
-const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSelect, selectedFlyPlane, setSelectedFlyPlane, searchResults, handleSearch, destinationAirport, setDestinationAirport, handleFly}) => {
+const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSelect, selectedFlyPlane, setSelectedFlyPlane, searchResults, handleSearch, destinationAirport, setDestinationAirport, handleFly, carrier, setCarrier}) => {
 	return (
 		<div className="modal mx-0">
 			<div className="modal-content">
@@ -61,21 +64,42 @@ const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSel
 				{type === 'planes' &&
 					planes.map((plane: Plane) => {
 						return (
-							<div className="plane">
+							<div className="plane d-flex flex-row align-items-center border rounded mb-3 p-3">
 								<div className="image-container">
-									<img className="" src={`../img/planes/${plane.type}.png`} alt="" />
+									<img src={`../img/planes/${plane.type}.png`} alt="" className="img-fluid" style={{maxWidth: '400px'}} />
 								</div>
-								<div className="stats-container w-50">
-									<div>Range: {plane.range}</div>
-									<div>Passenger Capacity: {plane.passenger_capacity}</div>
-									<div>Name: {plane.name}</div>
+								<div className="stats-container ms-3">
+									<h5 className="mb-1">{plane.name}</h5>
+									<div className="d-flex flex-row">
+										<div className="w-50 d-flex flex-column">
+											<div>
+												<span className="text-nowrap me-2">Type:</span>
+												<span>{plane.type_name}</span>
+											</div>
+											<div>
+												<span className="text-nowrap me-2">Range:</span>
+												<span>{plane.range} km</span>
+											</div>
+										</div>
+										<div className="w-50 d-flex flex-column">
+											<div>
+												<span className="text-nowrap me-2">Passenger Capacity:</span>
+												<span>{plane.passenger_capacity}</span>
+											</div>
+										</div>
+									</div>
 								</div>
-								<div className="stats-container w-25">
-									<Button onClick={() => onPlaneSelect(plane)}>Fly</Button>
+								<div className="location-container ms-auto">
+									<div>
+										<strong>Location:</strong>
+									</div>
+									<div>{plane.airport.name}</div>
+									<div>({plane.airport.icao})</div>
 								</div>
 							</div>
 						);
 					})}
+
 				{type === 'airport' && (
 					<div>
 						{Object.keys(airport).map((key) => (
@@ -145,7 +169,6 @@ const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSel
 							</div>
 						</div>
 						<div className="col-md-6 h-100">
-							{destinationAirport ? <h3>{destinationAirport.name}</h3> : <h3>Select destination airport</h3>}
 							<SearchBox onSearch={handleSearch}></SearchBox>
 							<div className="scrollable-content">
 								<div className="list-group mt-3">
@@ -169,7 +192,11 @@ const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSel
 										})}
 								</div>
 							</div>
-							<div className="mb-6">
+							<div className="mt-4 d-flex">
+								<strong>
+									<h3 className="selected-header">Selected: </h3>
+								</strong>
+								<span className="w-75 airport-name">{destinationAirport ? <h3>{destinationAirport.name}</h3> : <h3>Select destination airport</h3>}</span>
 								<button onClick={handleFly} className="btn btn-primary float-end mr-6">
 									Fly
 								</button>
@@ -177,6 +204,7 @@ const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSel
 						</div>
 					</div>
 				)}
+				{type === 'fuel' && <FuelView onCarrierUpdated={setCarrier} fuelPrice={2} carrier={carrier} onBuyMoreFuel={() => console.log('F')} />}
 			</div>
 		</div>
 	);

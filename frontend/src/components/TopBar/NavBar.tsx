@@ -1,6 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './NavBar.css';
+import Button from '../Button/Button';
 
 interface Carrier {
 	[key: string]: any;
@@ -8,8 +9,13 @@ interface Carrier {
 interface NavbarProps {
 	carrier: Carrier;
 	onClick: (type: string) => void;
+	handleMoreFuelClick: () => void;
 }
-function Navbar({onClick, carrier}: NavbarProps) {
+function Navbar({onClick, carrier, handleMoreFuelClick}: NavbarProps) {
+	const statItems = [
+		{text: 'Money', identifier: 'money', unit: ' €', logo: '../../img/dollar.png'},
+		{text: 'Fuel', identifier: 'fuel', unit: ' L', logo: '../../img/gas-can.png', button: {text: '+', func: handleMoreFuelClick}}
+	];
 	return (
 		<nav className="navbar navbar-expand-lg navbar-dark bg-dark">
 			<div className="container-fluid">
@@ -28,12 +34,23 @@ function Navbar({onClick, carrier}: NavbarProps) {
 					))}
 				</ul>
 			</div>
-			{carrier &&
-				statItems.map((statItem, index) => (
-					<span className="ns">
-						{statItem.text}: {carrier[statItem.identifier]}
-					</span>
-				))}
+			<div className="d-flex stat-container w-25">
+				{carrier &&
+					statItems.map((statItem, index) => (
+						<span>
+							<img src={statItem.logo} alt="" className="stat-item-img" />
+							<span className="ns">
+								{carrier[statItem.identifier].toFixed(0) + statItem.unit}
+
+								{statItem.button && (
+									<Button color="success" onClick={statItem.button.func}>
+										{statItem.button.text}
+									</Button>
+								)}
+							</span>
+						</span>
+					))}
+			</div>
 		</nav>
 	);
 }
@@ -43,11 +60,6 @@ const navItems = [
 	{text: 'Shop', logo: '../../img/shop.png'},
 	{text: 'Item 3', logo: '../../img/black-plane.png'}
 	// Add more items as needed
-];
-
-const statItems = [
-	{text: 'Money', identifier: 'money', logo: ''},
-	{text: 'Fuel', identifier: 'fuel', logo: ''}
 ];
 
 const logoStyle = {

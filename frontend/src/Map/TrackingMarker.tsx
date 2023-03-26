@@ -4,6 +4,7 @@ import {Marker} from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet-rotatedmarker';
 import styled from 'styled-components';
+import Velocity from 'velocity-animate';
 
 function getHeading(fromLatLng, toLatLng) {
 	const fromLat = (fromLatLng.lat * Math.PI) / 180;
@@ -23,7 +24,9 @@ interface TrackingMarkerProps {
 	transitionTime: number;
 	disappear: boolean;
 }
-
+function easeInOutQuad(t) {
+	return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+}
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 const TrackingMarker: React.FC<TrackingMarkerProps> = ({positions, icon, transitionTime}) => {
@@ -34,23 +37,24 @@ const TrackingMarker: React.FC<TrackingMarkerProps> = ({positions, icon, transit
 		if (positions.length > 1) {
 			const startPos = L.latLng(positions[0]);
 			const endPos = L.latLng(positions[1]);
-			const startTime = Date.now();
 
-			const animateMarker = () => {
-				const elapsed = Date.now() - startTime;
-				const t = Math.min(1, elapsed / transitionTime);
+			const markerElement = document.createElement('div');
 
-				const newLat = lerp(startPos.lat, endPos.lat, t);
-				const newLng = lerp(startPos.lng, endPos.lng, t);
-
-				setCurrentPosition([newLat, newLng]);
-
-				if (t < 1) {
-					requestAnimationFrame(animateMarker);
+			Velocity(
+				markerElement,
+				{
+					tween: [1, 0]
+				},
+				{
+					duration: transitionTime,
+					easing: 'linear',
+					progress: (elements, complete, remaining, start, tweenValue) => {
+						const newLat = lerp(startPos.lat, endPos.lat, tweenValue);
+						const newLng = lerp(startPos.lng, endPos.lng, tweenValue);
+						setCurrentPosition([newLat, newLng]);
+					}
 				}
-			};
-
-			requestAnimationFrame(animateMarker);
+			);
 		}
 	}, [positions, transitionTime]);
 

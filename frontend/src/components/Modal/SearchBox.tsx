@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import './Modal.css';
-import Button from '../../Button/Button';
-import {Continent, Size} from '../../../types/types';
-import {postSearch} from '../../../Map/api';
+import Button from '../Button/Button';
+import {Continent, Size} from '../../types/types';
+import {postSearch} from '../../Map/api';
 
 interface SearchBoxProps {
 	onSearch: (data: any) => void;
@@ -48,8 +48,8 @@ const SearchBox: React.FC<SearchBoxProps> = ({onSearch}) => {
 			<div className="row justify-content-center">
 				<div className="col-md-6 w-100">
 					<form onSubmit={handleSubmit}>
-						<div className="input-group mb-3">
-							<input type="text" className="form-control" placeholder="Search..." aria-label="Search" aria-describedby="basic-addon2" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} />
+						<div className="input-group mb-3 w-75">
+							<input type="text" className="form-control search-box" placeholder="Search..." aria-label="Search" aria-describedby="basic-addon2" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} />
 							<button className="btn btn-primary" type="button" id="button-addon2">
 								Choose from map
 							</button>

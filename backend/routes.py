@@ -8,9 +8,12 @@ import time
 from db_handler import Db_handler
 from carrier_handler import Carrier
 from airplane import Airplane
+import config as cfg
 import pickle
 import json
 from flask_socketio import SocketIO, emit
+import threading
+
 
 
 class CustomJSONEncoder(json.JSONEncoder):
@@ -44,12 +47,35 @@ class Router:
         self.socketio = SocketIO(self.router, cors_allowed_origins="*")
         # ... Other routes
         CORS(self.router, resources={r"*": {"origins": "*"}})
+        def return_carrier():
+                data = {
+                'name': carrier.name,
+                'airplanes': [plane.__dict__ for plane in carrier.airplanes],
+                'headquarters': carrier.headquarters,
+                'id': carrier.id,
+                'resources': carrier.resources,
+                'fuel': carrier.fuel,
+                'money': carrier.money,
+            }
+                return json.dumps(data, cls=CustomJSONEncoder)
 
         @self.router.route('/airport/coords/<icao>')
         def coords(icao):
             response = jsonify(db_handler.get_coords(icao))
             response.headers.add('Access-Control-Allow-Origin', '*')
             return response
+        @self.router.route('/fuel_price')
+        def fprice():
+            response = jsonify(cfg.FUEL_PRICE_PER_LITER)
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
+        @self.router.route('/buy_fuel',methods=['POST'])
+        def buy_fuel():
+            data = request.json
+            amount = data.get('amount', None)
+            carrier_id = data.get("carrierId",None)
+            carrier.buy_fuel(amount)
+            return return_carrier()
         @self.router.route('/route')
         def route():
             departure_airport = db_handler.add_airport("EDDB")
@@ -58,7 +84,7 @@ class Router:
 
             route = Route(departure_airport, arrival_airport, plane)
             route_data = {
-                'departure_coords': route.depature_coords,
+                'departure_coords': route.departure_coords,
                 'arrival_coords': route.arrival_coords,
                 'route_length': route.route_lenght,
                 'flown': route.flown,
@@ -76,17 +102,22 @@ class Router:
             return response
         @self.router.route('/carrier')
         def get_carrier():
-            data = {
-                'name': carrier.name,
-                'airplanes': [plane.__dict__ for plane in carrier.airplanes],
-                'headquarters': carrier.headquarters,
-                'id': carrier.id,
-                'resources': carrier.resources,
-                'fuel': carrier.fuel,
-                'money': carrier.money,
-            }
-            return json.dumps(data, cls=CustomJSONEncoder)
+            return return_carrier()
 
+
+        @self.router.route('/search_airports', methods=['POST'])
+        def search_airports():
+            data = request.json
+            search_parameters = {
+                'search_term': data.get('searchTerm', None),
+                'continent': data.get('selectedContinents', None),
+                'size': data.get('selectedSizes', None),
+            }
+            results = db_handler.search_airports(search_parameters['search_term'],search_parameters['continent'],search_parameters['size'])
+            response = jsonify(results)
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
+        
         @self.router.route('/post_route', methods=['POST'])
         def post_route():
             data = request.json
@@ -102,46 +133,20 @@ class Router:
             route = Route(departure,arrival,plane)
             # Do something with the data
             carrier.active_route = route
-            
             return json.dumps(route, cls=CustomJSONEncoder)
-
-        @self.router.route('/search_airports', methods=['POST'])
-        def search_airports():
-            data = request.json
-            search_parameters = {
-                'search_term': data.get('searchTerm', None),
-                'continent': data.get('selectedContinents', None),
-                'size': data.get('selectedSizes', None),
-            }
-            results = db_handler.search_airports(search_parameters['search_term'],search_parameters['continent'],search_parameters['size'])
-            response = jsonify(results)
-            response.headers.add('Access-Control-Allow-Origin', '*')
-            return response
+        
         @self.router.route('/fly', methods=['POST'])
         def fly():
-            if carrier.active_route != None:
-                carrier.active_route.fly()
-                data = {
-                'name': carrier.name,
-                'airplanes': [plane.__dict__ for plane in carrier.airplanes],
-                'headquarters': carrier.headquarters,
-                'id': carrier.id,
-                'resources': carrier.resources,
-                'fuel': carrier.fuel,
-                'money': carrier.money,
-            }
-            return json.dumps(data, cls=CustomJSONEncoder)
-    def notify_frontend_carrier_updated():
-        data = {
-            'name': carrier.name,
-            'airplanes': [plane.__dict__ for plane in carrier.airplanes],
-            'headquarters': carrier.headquarters,
-            'id': carrier.id,
-            'resources': carrier.resources,
-            'fuel': carrier.fuel,
-            'money': carrier.money,
-        }
-        emit('carrier_updated', json.dumps(data, cls=CustomJSONEncoder), broadcast=True)
+            if carrier.active_route is not None:
+                carrier.active_route.take_off()
+                time.sleep(0.5)
+                while not carrier.active_route.fly(carrier.active_route.plane, carrier):
+                    time.sleep(1)
+
+                return return_carrier()
+            else:
+                return json.dumps({"error": "No active route found"}, cls=CustomJSONEncoder)
+    
 
     def run(self):
         self.socketio.run(self.router, debug=True)
@@ -151,6 +156,9 @@ if __name__ == '__main__':
     db_handler = Db_handler()
     carrier = Carrier("HEOO", "EFHK")
     carrier.new_plane("C172")
+    carrier.new_plane("B350")
+    carrier.new_plane("P300")
+    carrier.new_plane("L75")
     router = Router(carrier, db_handler)
     router.router.wsgi_app = TimingMiddleware(router.router.wsgi_app)
     router.run()

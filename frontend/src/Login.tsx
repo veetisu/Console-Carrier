@@ -1,5 +1,4 @@
 import ListGroup from './components/ListGroup';
-import {Alert} from './components/Alert';
 import Input from './components/Input';
 import Button from './components/Button/Button';
 import Like from './components/Like/Like';

@@ -19,9 +19,23 @@
 .card-body img {
 	margin-right: 0.5rem;
 }
-
+.stat-container {
+	justify-content: right;
+	display: flex;
+	flex-direction: row;
+	vertical-align: middle;
+}
 .ns {
 	display: flex !important;
+	flex-direction: row;
 	align-items: center;
 	color: white !important;
+	margin-right: 2vw;
+	vertical-align: middle;
+}
+.stat-item-img {
+	max-height: 32px;
+}
+.more-button {
+	max-height: 10%;
 }

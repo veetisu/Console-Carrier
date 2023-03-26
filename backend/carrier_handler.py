@@ -2,6 +2,7 @@ from db_handler import Db_handler
 from airplane import Airplane
 import config as cfg
 import pickle
+from route_handler import Route
 
 db_handler = Db_handler()
 class Carrier():
@@ -18,7 +19,7 @@ class Carrier():
         self.resources = ["fuel","money"]
         self.fuel = cfg.STARTING_FUEL
         self.money = cfg.STARTING_MONEY
-        self.active_routes = None
+        self.active_route : Route
         
         db_handler.add_carrier(self)
         
@@ -34,6 +35,15 @@ class Carrier():
             setattr(self, resource, getattr(self, resource) + amount)
         else:
             print(f"Resource '{resource}' not found.")
+    def buy_fuel(self, amount):
+        price = amount*cfg.FUEL_PRICE_PER_LITER
+        if self.money >= price:
+            self.fuel += amount
+            self.money -= price
+        else:
+            amount = self.money/cfg.FUEL_PRICE_PER_LITER
+            self.fuel += amount
+            self.money -= price
 
     def get_resources(self):
     # Returns list of tuples with resource name and amount
