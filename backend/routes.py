@@ -13,6 +13,7 @@ import pickle
 import json
 from flask_socketio import SocketIO, emit
 import threading
+import atexit
 
 
 
@@ -156,14 +157,26 @@ class Router:
     def run(self):
         self.socketio.run(self.router, debug=True, allow_unsafe_werkzeug=True)
 
+def load_carrier():
+    """Loads carrier from file using pickles. Returns carrier object if found and False otherwise. """
+    try:
+        with open('save/carrier_save.pickle', 'rb') as f:
+            carrier = pickle.load(f)
+        return carrier
+    except Exception:
+        return False
         
 if __name__ == '__main__':
     db_handler = Db_handler()
-    carrier = Carrier("HEOO", "EFHK")
-    carrier.new_plane("C172")
-    carrier.new_plane("B350")
-    carrier.new_plane("P300")
-    carrier.new_plane("L75")
+    carrier = load_carrier()
+    if not carrier:
+        carrier = Carrier("HEOO", "EFHK")
+        carrier.new_plane("C172")
+        carrier.new_plane("B350")
+        carrier.new_plane("P300")
+        carrier.new_plane("L75")    
+    else:
+        atexit.register(carrier.save)  
     router = Router(carrier, db_handler)
     router.router.wsgi_app = TimingMiddleware(router.router.wsgi_app)
     router.run()

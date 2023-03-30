@@ -9,7 +9,7 @@ interface Props {
 
 const Button = ({children, onClick, color = 'primary', classes}: Props) => {
 	return (
-		<button type="button" className={[styles.btn, styles['btn-' + color]].join(' ')} onClick={onClick}>
+		<button type="button" className={[styles.btn, styles['btn-' + color], classes].join(' ')} onClick={onClick}>
 			{children}
 		</button>
 	);

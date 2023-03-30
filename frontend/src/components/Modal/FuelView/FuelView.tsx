@@ -36,26 +36,32 @@ const FuelView: React.FC<FuelViewProps> = ({carrier, onCarrierUpdated}) => {
 	const totalCost = amount * fuelPrice;
 
 	return (
-		<div>
-			<h3>Fuel</h3>
-			<p>You have {carrier.fuel.toFixed(0)} L of fuel.</p>
-			<p>Price per liter: €{fuelPrice.toFixed(2)}</p>
-			<div className="mb-3">
-				<label htmlFor="amount" className="form-label">
-					Amount (L)
-				</label>
-				<input type="range" className="form-range" id="amount" min="0" max="1000" step="1" value={amount} onChange={handleAmountChange} />
+		<div className="container">
+			<div className="row justify-content-center">
+				<div className="col-md-6">
+					<div className="w-100">
+						<h3>Fuel</h3>
+						<p>You have {carrier.fuel.toFixed(0)} L of fuel.</p>
+						<p>Price per liter: €{fuelPrice.toFixed(2)}</p>
+						<div className="mb-3">
+							<label htmlFor="amount" className="form-label">
+								Amount (L)
+							</label>
+							<input type="range" className="form-range" id="amount" min="0" max="1000" step="1" value={amount} onChange={handleAmountChange} />
+						</div>
+						<div className="mb-3">
+							<label htmlFor="amount-input" className="form-label">
+								Amount (L)
+							</label>
+							<input type="number" className="form-control" id="amount-input" value={amount} min="0" max="1000" step="1" onChange={handleAmountChange} />
+						</div>
+						<p>Total cost: €{totalCost.toFixed(2)}</p>
+						<button className="btn btn-primary" onClick={() => onBuyMoreFuel(amount)}>
+							Buy {amount} L of fuel
+						</button>
+					</div>
+				</div>
 			</div>
-			<div className="mb-3">
-				<label htmlFor="amount-input" className="form-label">
-					Amount (L)
-				</label>
-				<input type="number" className="form-control" id="amount-input" value={amount} min="0" max="1000" step="1" onChange={handleAmountChange} />
-			</div>
-			<p>Total cost: €{totalCost.toFixed(2)}</p>
-			<button className="btn btn-primary" onClick={() => onBuyMoreFuel(amount)}>
-				Buy {amount} L of fuel
-			</button>
 		</div>
 	);
 };

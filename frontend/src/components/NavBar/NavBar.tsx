@@ -37,18 +37,18 @@ function Navbar({onClick, carrier, handleMoreFuelClick}: NavbarProps) {
 			<div className="d-flex stat-container w-25">
 				{carrier &&
 					statItems.map((statItem, index) => (
-						<span>
-							<img src={statItem.logo} alt="" className="stat-item-img" />
+						<div id="d-flex flex-row">
 							<span className="ns">
+								<img src={statItem.logo} alt="" className="stat-item-img" />
 								{carrier[statItem.identifier].toFixed(0) + statItem.unit}
 
 								{statItem.button && (
-									<Button color="success" onClick={statItem.button.func}>
+									<Button classes="btn-sm" color="success" onClick={statItem.button.func}>
 										{statItem.button.text}
 									</Button>
 								)}
 							</span>
-						</span>
+						</div>
 					))}
 			</div>
 		</nav>
