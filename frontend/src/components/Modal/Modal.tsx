@@ -8,6 +8,7 @@ import SearchBox from './SearchBox';
 import {Continent, Size} from '../../types/types';
 import {postSearch} from '../../Map/api';
 import FuelView from './FuelView/FuelView';
+import ShopView from './ShopView/ShopView';
 
 interface ModalProps {
 	show: boolean;
@@ -205,6 +206,7 @@ const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSel
 					</div>
 				)}
 				{type === 'fuel' && <FuelView onCarrierUpdated={setCarrier} fuelPrice={2} carrier={carrier} onBuyMoreFuel={() => console.log('F')} />}
+				{type === 'shop' && <ShopView></ShopView>}
 			</div>
 		</div>
 	);

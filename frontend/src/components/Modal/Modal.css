@@ -59,6 +59,7 @@
 	color: white;
 	border-radius: 3px;
 	cursor: pointer;
+	z-index: 10001;
 }
 
 .close-button:hover {

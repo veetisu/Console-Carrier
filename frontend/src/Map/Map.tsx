@@ -3,7 +3,7 @@ import {MapContainer, TileLayer, Marker, Popup, useMap} from 'react-leaflet';
 import L, {latLngBounds, LatLngBoundsLiteral} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {fetchAirports, fetchAirportCoords, fetchRoute, fetchCarrier, postRoute, postFly} from './api';
-import Navbar from '../components/TopBar/NavBar';
+import Navbar from '../components/NavBar/NavBar';
 import './Map.css';
 import TrackingMarker from './TrackingMarker';
 import Modal from '../components/Modal/Modal';
@@ -91,7 +91,7 @@ function App() {
 		fetchActiveRoute();
 	}, [destinationAirport]);
 
-	const handleItemClick = (type: string) => {
+	const handleNavItemClick = (type: string) => {
 		setShowModal(true);
 		setModalContent(type);
 	};
@@ -162,7 +162,7 @@ function App() {
 
 	return (
 		<>
-			<Navbar handleMoreFuelClick={handleMoreFuelClick} carrier={carrier} onClick={handleItemClick} />
+			<Navbar handleMoreFuelClick={handleMoreFuelClick} carrier={carrier} onClick={handleNavItemClick} />
 			<MapContainer
 				className="map-container" // Update the className to use the Map.css rule
 				center={center}
@@ -184,7 +184,7 @@ function App() {
 							<Popup>
 								{airport.name}
 								<br />
-								{selectedPlane ? <Button onClick={() => handleFly(airport)}>Fly here</Button> : <Button onClick={() => handleAirportMarkerClick(airport)}>More</Button>}
+								{<Button onClick={() => handleAirportMarkerClick(airport)}>More</Button>}
 							</Popup>
 						</Marker>
 					);

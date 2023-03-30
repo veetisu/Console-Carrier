@@ -69,6 +69,11 @@ class Router:
             response = jsonify(cfg.FUEL_PRICE_PER_LITER)
             response.headers.add('Access-Control-Allow-Origin', '*')
             return response
+        @self.router.route('/cfg')
+        def getcfg():
+            response = jsonify(cfg.PLANES)
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
         @self.router.route('/buy_fuel',methods=['POST'])
         def buy_fuel():
             data = request.json
@@ -149,7 +154,7 @@ class Router:
     
 
     def run(self):
-        self.socketio.run(self.router, debug=True)
+        self.socketio.run(self.router, debug=True, allow_unsafe_werkzeug=True)
 
         
 if __name__ == '__main__':

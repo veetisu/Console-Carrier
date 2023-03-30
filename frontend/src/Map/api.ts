@@ -45,6 +45,16 @@ export const fetchFuelPrice = async () => {
 		console.error('Error fetching route:', error);
 	}
 };
+export const fetchCfg = async () => {
+	try {
+		const response = await fetch(baseURL + '/cfg');
+		const data = await response.json();
+		console.log(data);
+		return data;
+	} catch (error) {
+		console.error('Error fetching route:', error);
+	}
+};
 export const postBuyFuel = (amount, carrierId) => {
 	const requestOptions = {
 		method: 'POST',

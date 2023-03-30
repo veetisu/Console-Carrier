@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "concurrently \"npm run start-backend\" \"npm run start-frontend\"",
+    "start-backend": "cd ../backend && python routes.py",
+    "start-frontend": "npm run dev"
   },
   "dependencies": {
     "@types/styled-components": "^5.1.26",
@@ -26,6 +29,7 @@
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.0",
     "@vitejs/plugin-react": "^3.1.0",
+    "concurrently": "^7.6.0",
     "typescript": "^4.9.3",
     "vite": "^4.2.0"
   }
