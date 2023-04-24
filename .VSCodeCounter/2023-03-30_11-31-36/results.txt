@@ -1,0 +1,33 @@
+Date : 2023-03-30 11:31:36
+Directory : c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\backend
+Total : 9 files,  729 codes, 90 comments, 118 blanks, all 937 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Python   |          9 |        729 |         90 |        118 |        937 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                   | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                      |          9 |        729 |         90 |        118 |        937 |
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                               | language | code       | comment    | blank      | total      |
++------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\backend\airplane.py        | Python   |         29 |          9 |          5 |         43 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\backend\carrier_handler.py | Python   |         44 |          6 |          8 |         58 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\backend\config.py          | Python   |         71 |          2 |          7 |         80 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\backend\db_handler.py      | Python   |        109 |         14 |         30 |        153 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\backend\gui_handler.py     | Python   |        132 |          6 |         15 |        153 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\backend\main.py            | Python   |         51 |         30 |         13 |         94 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\backend\observer.py        | Python   |         20 |          4 |          3 |         27 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\backend\route_handler.py   | Python   |        105 |         13 |         16 |        134 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\backend\routes.py          | Python   |        168 |          6 |         21 |        195 |
+| Total                                                                  |          |        729 |         90 |        118 |        937 |
++------------------------------------------------------------------------+----------+------------+------------+------------+------------+

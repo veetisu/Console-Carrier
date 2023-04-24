@@ -1,3 +1,4 @@
+#db_handler.py
 import mariadb
 import sys
 import os
@@ -63,7 +64,7 @@ class Db_handler():
         return str(data)
 
     def get_all_airports(self):
-        type_filter = ("large_airport","KK")
+        type_filter = ("large_airport","this second string is needed for some reason")
         self.cursor.execute("SELECT * FROM airport WHERE type IN {}".format(type_filter))
         data = self.cursor.fetchall()
         return data

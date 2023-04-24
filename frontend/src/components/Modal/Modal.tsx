@@ -9,6 +9,7 @@ import {Continent, Size} from '../../types/types';
 import {postSearch} from '../../Map/api';
 import FuelView from './FuelView/FuelView';
 import ShopView from './ShopView/ShopView';
+import Carrier from '../../types/Carrier';
 
 interface ModalProps {
 	show: boolean;
@@ -25,7 +26,8 @@ interface ModalProps {
 	setDestinationAirport: (airport: Airport) => void;
 	handleFly: () => void;
 	carrier: any;
-	setCarrier: (carrier: any) => void;
+	setCarrier: (carrier: Carrier) => void;
+	isFlyDisabled: boolean;
 }
 
 export interface Plane {
@@ -55,7 +57,7 @@ export interface Plane {
 }
 
 function handleClick(plane: Plane) {}
-const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSelect, selectedFlyPlane, setSelectedFlyPlane, searchResults, handleSearch, destinationAirport, setDestinationAirport, handleFly, carrier, setCarrier}) => {
+const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSelect, selectedFlyPlane, setSelectedFlyPlane, searchResults, handleSearch, destinationAirport, setDestinationAirport, handleFly, carrier, setCarrier, isFlyDisabled}) => {
 	return (
 		<div className="modal mx-0">
 			<div className="modal-content">
@@ -67,9 +69,9 @@ const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSel
 						return (
 							<div className="plane d-flex flex-row align-items-center border rounded mb-3 p-3">
 								<div className="image-container">
-									<img src={`../img/planes/${plane.type}.png`} alt="" className="img-fluid" style={{maxWidth: '400px'}} />
+									<img src={`../img/planes/${plane.type}.png`} alt="" className="img-fluid" style={{maxWidth: '25vw'}} />
 								</div>
-								<div className="stats-container ms-3">
+								<div className="stats-container">
 									<h5 className="mb-1">{plane.name}</h5>
 									<div className="d-flex flex-row">
 										<div className="w-50 d-flex flex-column">
@@ -198,7 +200,7 @@ const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSel
 									<h3 className="selected-header">Selected: </h3>
 								</strong>
 								<span className="w-75 airport-name">{destinationAirport ? <h3>{destinationAirport.name}</h3> : <h3>Select destination airport</h3>}</span>
-								<button onClick={handleFly} className="btn btn-primary float-end mr-6">
+								<button disabled={isFlyDisabled} onClick={handleFly} className="btn btn-primary float-end mr-6">
 									Fly
 								</button>
 							</div>

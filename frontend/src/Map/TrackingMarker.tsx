@@ -64,11 +64,7 @@ const TrackingMarker: React.FC<TrackingMarkerProps> = ({positions, icon, transit
 		const endPos = L.latLng(positions[1]);
 		const heading = getHeading(startPos, endPos);
 		const markerIcon = markerRef.current.getElement();
-		markerRef.current.setRotationAngle(270 + heading);
-
-		if (markerIcon) {
-			markerIcon.style.transform = `translate3d(-50%, -100%, 0)`;
-		}
+		markerRef.current.setRotationAngle(heading - 45);
 	}
 
 	return (

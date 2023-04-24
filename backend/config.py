@@ -17,11 +17,12 @@ airport_passenger_multiplier = {
 money_per_passenger_per_km = 1
 flight_time_multiplier = 3
 
-vip_chance = 0.2
+vip_chance = 0
 
 
 PLANES = {
     "C172": {
+        "type": "C172",
         "name": "Cessna 172 Skyhawk",
         "range": 1280, # km
         "cruise_speed": 226, # km/h
@@ -30,6 +31,7 @@ PLANES = {
         "price": 300_000 
     },
     "B350": {
+        "type": "B350",
         "name": "Beechcraft King Air 350",
         "range": 2960, # km
         "cruise_speed": 574, # km/h
@@ -38,6 +40,7 @@ PLANES = {
         "price": 8_000_000
     },
     "P300": {
+        "type": "P300",
         "name": "Embraer Phenom 300",
         "range": 3334, # km
         "cruise_speed": 834, # km/h
@@ -46,6 +49,7 @@ PLANES = {
         "price": 9_500_000
     },
     "L75": {
+        "type": "L75",
         "name": "Bombardier Learjet 75 Liberty",
         "range": 3810, # km
         "cruise_speed": 860, # km/h
@@ -54,6 +58,7 @@ PLANES = {
         "price":13_800_000
     },
     "A320": {
+        "type": "A320",
         "name": "Airbus A320neo",
         "range": 6500, # km
         "cruise_speed": 828, # km/h
@@ -62,6 +67,7 @@ PLANES = {
         "price": 110_000_000
     },
     "747" : {
+    "type": "747",
     "name": "Boeing 747",
     "range": 13450,
     "cruise_speed": 920,

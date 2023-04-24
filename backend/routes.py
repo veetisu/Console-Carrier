@@ -14,7 +14,18 @@ import json
 from flask_socketio import SocketIO, emit
 import threading
 import atexit
+import threading
+from threading import Thread
+from datetime import datetime
+import traceback
 
+def set_interval(func, sec):
+    def func_wrapper():
+        set_interval(func, sec)
+        func()
+    t = threading.Timer(sec, func_wrapper)
+    t.start()
+    return t
 
 
 class CustomJSONEncoder(json.JSONEncoder):
@@ -25,15 +36,19 @@ class CustomJSONEncoder(json.JSONEncoder):
             return obj.__dict__
         elif isinstance(obj, Route):
             return obj.__dict__
+        elif isinstance(obj, datetime):
+            return obj.isoformat()
         else:
             return super().default(obj)
-        
+
+
 class TimingMiddleware:
     def __init__(self, app):
         self.app = app
 
     def __call__(self, environ, start_response):
         start_time = time.monotonic()
+
         def custom_start_response(status, headers, exc_info=None):
             elapsed_time = time.monotonic() - start_time
             print(f"Request took {elapsed_time:.6f} seconds to complete.")
@@ -42,14 +57,16 @@ class TimingMiddleware:
 
 # Add the middleware to your Flask app
 
+
 class Router:
-    def __init__(self, carrier: Carrier, db_handler:Db_handler) -> None:
+    def __init__(self, carrier: Carrier, db_handler: Db_handler) -> None:
         self.router = Flask(__name__)
         self.socketio = SocketIO(self.router, cors_allowed_origins="*")
         # ... Other routes
         CORS(self.router, resources={r"*": {"origins": "*"}})
+
         def return_carrier():
-                data = {
+            data = {
                 'name': carrier.name,
                 'airplanes': [plane.__dict__ for plane in carrier.airplanes],
                 'headquarters': carrier.headquarters,
@@ -58,30 +75,35 @@ class Router:
                 'fuel': carrier.fuel,
                 'money': carrier.money,
             }
-                return json.dumps(data, cls=CustomJSONEncoder)
+            return json.dumps(data, cls=CustomJSONEncoder)
 
         @self.router.route('/airport/coords/<icao>')
         def coords(icao):
             response = jsonify(db_handler.get_coords(icao))
             response.headers.add('Access-Control-Allow-Origin', '*')
             return response
+
         @self.router.route('/fuel_price')
         def fprice():
             response = jsonify(cfg.FUEL_PRICE_PER_LITER)
             response.headers.add('Access-Control-Allow-Origin', '*')
             return response
+
         @self.router.route('/cfg')
         def getcfg():
-            response = jsonify(cfg.PLANES)
+            planes_array = list(cfg.PLANES.values())
+            response = jsonify(planes_array)
             response.headers.add('Access-Control-Allow-Origin', '*')
             return response
-        @self.router.route('/buy_fuel',methods=['POST'])
+
+        @self.router.route('/buy_fuel', methods=['POST'])
         def buy_fuel():
             data = request.json
             amount = data.get('amount', None)
-            carrier_id = data.get("carrierId",None)
+            carrier_id = data.get("carrierId", None)
             carrier.buy_fuel(amount)
             return return_carrier()
+
         @self.router.route('/route')
         def route():
             departure_airport = db_handler.add_airport("EDDB")
@@ -99,17 +121,17 @@ class Router:
                 'flight_time': route.flight_time,
             }
             response = jsonify(route_data)
-            response.headers.add('Access-Control-Allow-Origin', '*')
             return response
+
         @self.router.route('/airports')
         def airports():
             data = db_handler.get_all_airports()
             response = jsonify(data)
             return response
+
         @self.router.route('/carrier')
         def get_carrier():
             return return_carrier()
-
 
         @self.router.route('/search_airports', methods=['POST'])
         def search_airports():
@@ -119,53 +141,63 @@ class Router:
                 'continent': data.get('selectedContinents', None),
                 'size': data.get('selectedSizes', None),
             }
-            results = db_handler.search_airports(search_parameters['search_term'],search_parameters['continent'],search_parameters['size'])
+            results = db_handler.search_airports(
+                search_parameters['search_term'], search_parameters['continent'], search_parameters['size'])
             response = jsonify(results)
             response.headers.add('Access-Control-Allow-Origin', '*')
             return response
-        
-        @self.router.route('/post_route', methods=['POST'])
-        def post_route():
+
+        @self.router.route('/fly/<plane_id>', methods=['POST'])
+        def fly (plane_id):
             data = request.json
             departure = data['departure']
             arrival = data['arrival']
-            plane_id = data['plane_id']
             print(departure, arrival)
             departure = db_handler.add_airport(departure)
             arrival = db_handler.add_airport(arrival)
-            #This seatches for plane with given id from carriers planes
-            plane = next((plane for plane in carrier.airplanes if plane.id == plane_id), None)
+            plane_id = int(plane_id)
+            plane = next(
+                (plane for plane in carrier.airplanes if plane.id == plane_id), None)
+            print(plane)
+            route = Route(departure, arrival, plane)
+            carrier.active_routes[plane_id] = route
+            print("Active routes:", carrier.active_routes)
+            if route is not None:
+                route.take_off()
+                response = json.dumps(route, cls=CustomJSONEncoder)
+                return response
+            else:
+                return json.dumps({"error": f"Error in route generation"}, cls=CustomJSONEncoder)
 
-            route = Route(departure,arrival,plane)
-            # Do something with the data
-            carrier.active_route = route
-            return json.dumps(route, cls=CustomJSONEncoder)
-        
-        @self.router.route('/fly', methods=['POST'])
-        def fly():
-            if carrier.active_route is not None:
-                carrier.active_route.take_off()
-                time.sleep(0.5)
-                while not carrier.active_route.fly(carrier.active_route.plane, carrier):
-                    time.sleep(1)
+        @self.router.route('/land/<int:plane_id>', methods=['GET'])
+        def land_plane(plane_id):
+            try:
+                # Retrieve the route object and the carrier object from your data store
+                route = carrier.active_routes.get(plane_id)
+                result = route.fly(carrier)
+
+                if not result:
+                    return jsonify({"error": "Failed to land the plane"}), 400
 
                 return return_carrier()
-            else:
-                return json.dumps({"error": "No active route found"}, cls=CustomJSONEncoder)
-    
+            except Exception as e:
+                print(str(e))
+                traceback.print_exc()
+                return jsonify({"error": str(e)}), 500
 
     def run(self):
-        self.socketio.run(self.router, debug=True, allow_unsafe_werkzeug=True)
+        self.router.run(debug=True)
 
 def load_carrier():
     """Loads carrier from file using pickles. Returns carrier object if found and False otherwise. """
     try:
-        with open('save/carrier_save.pickle', 'rb') as f:
+        with open('.\save\carrier_save.pickle', 'rb') as f:
             carrier = pickle.load(f)
         return carrier
     except Exception:
         return False
-        
+
+
 if __name__ == '__main__':
     db_handler = Db_handler()
     carrier = load_carrier()
@@ -174,9 +206,11 @@ if __name__ == '__main__':
         carrier.new_plane("C172")
         carrier.new_plane("B350")
         carrier.new_plane("P300")
-        carrier.new_plane("L75")    
+        carrier.new_plane("L75")
+        carrier.save()
     else:
-        atexit.register(carrier.save)  
+        atexit.register(carrier.save)
     router = Router(carrier, db_handler)
     router.router.wsgi_app = TimingMiddleware(router.router.wsgi_app)
+    set_interval(carrier.save, 10)
     router.run()

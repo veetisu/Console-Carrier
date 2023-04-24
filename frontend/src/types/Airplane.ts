@@ -66,3 +66,41 @@ export default class Airplane implements Plane {
 
 	// Add other methods to modify the airplane object
 }
+
+interface Airport {
+	id: string;
+	icao: string;
+	type: string;
+	name: string;
+	latitude: number;
+	longitude: number;
+	elevation_feet: number;
+	continent: string;
+	iso_country: string;
+	iso_region: string;
+	municipality: string;
+	country_name: string;
+}
+
+interface Vip {
+	name: string;
+	value: number;
+	vip_message: string;
+	result_message: string;
+}
+
+export interface Route {
+	plane: Airplane;
+	departure_airport: Airport;
+	arrival_airport: Airport;
+	departure_coords: [number, number];
+	arrival_coords: [number, number];
+	route_length: number;
+	flown: boolean;
+	vip: Vip | null;
+	has_vip: boolean;
+	vip_accepted: boolean | null;
+	fuel_required: number;
+	flight_time: number;
+	status: string;
+}

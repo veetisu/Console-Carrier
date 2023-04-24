@@ -34,6 +34,7 @@
 	flex-direction: column;
 	justify-content: center;
 	color: #ccc;
+	margin-left: 10vw;
 }
 
 .plane {
@@ -45,7 +46,7 @@
 }
 
 .image-container img {
-	max-width: 100%;
+	max-width: 10vw;
 }
 
 .close-button {

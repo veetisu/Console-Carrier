@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {MapContainer, TileLayer, Marker, Popup, useMap} from 'react-leaflet';
 import L, {latLngBounds, LatLngBoundsLiteral} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import {fetchAirports, fetchAirportCoords, fetchRoute, fetchCarrier, postRoute, postFly} from './api';
+import {fetchAirports, fetchAirportCoords, fetchRoute, fetchCarrier, postFly, getLanding} from './api';
 import Navbar from '../components/NavBar/NavBar';
 import './Map.css';
 import TrackingMarker from './TrackingMarker';
@@ -13,9 +13,9 @@ import {Plane} from '../components/Modal/Modal';
 import CustomAlert from '../components/Alert/Alert';
 import 'jquery/dist/jquery.min.js';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import {Route} from './../types/Airplane';
 
 import 'bootstrap/dist/css/bootstrap.css';
-import {Route} from 'react-router-dom';
 
 const baseURL = 'http://127.0.0.1:5000';
 
@@ -57,7 +57,7 @@ function App() {
 		[90, 180]
 	];
 
-	const [route, setRoute] = useState<any>(null);
+	const [routes, setRoutes] = useState<Route[] | null>(null);
 	const [showModal, setShowModal] = useState(false);
 	const [modalContent, setModalContent] = useState<string | false>(false);
 	const [modalAirport, setModalAirport] = useState<Airport | false>(false);
@@ -68,6 +68,7 @@ function App() {
 	const [destinationAirport, setDestinationAirport] = useState<Airport | false>(false);
 	const [activeRoute, setActiveRoute] = useState<any | false>(false);
 	const [alerts, setAlerts] = useState<string[]>([]);
+	const [isFlyDisabled, setIsFlyDisabled] = useState(false);
 
 	const handleRemoveAlert = (index: number) => {
 		setAlerts((prevAlerts) => prevAlerts.filter((_, i) => i !== index));
@@ -81,15 +82,6 @@ function App() {
 		};
 		getCarrier();
 	}, []);
-	useEffect(() => {
-		async function fetchActiveRoute() {
-			if (selectedFlyPlane && destinationAirport) {
-				const route = await postRoute(selectedFlyPlane.airport.icao, destinationAirport.ident, selectedFlyPlane.id);
-				setActiveRoute(route);
-			}
-		}
-		fetchActiveRoute();
-	}, [destinationAirport]);
 
 	const handleNavItemClick = (type: string) => {
 		setShowModal(true);
@@ -112,26 +104,30 @@ function App() {
 	};
 	const handleFly = () => {
 		if (destinationAirport && selectedFlyPlane) {
-			const fly_route = {...activeRoute, active: true};
-
+			postFly(selectedFlyPlane.id, selectedFlyPlane.airport.icao, destinationAirport.ident)
+				.then((routeJson) => {
+					const route: Route = routeJson;
+					console.log();
+					if (route != null) {
+						setActiveRoute(route);
+					} else {
+						throw new Error('Invalid route object');
+					}
+					setTimeout(() => {
+						getLanding(route.plane.id);
+						setActiveRoute(false);
+					}, route.flight_time * 1000);
+				})
+				.catch((error) => {
+					console.error('Error in handleFly:', error);
+					setAlerts((prevAlerts) => [...prevAlerts, 'Error flying plane']);
+				});
 			setSelectedFlyPlane(false);
 			setDestinationAirport(false);
 			setModalContent(false);
 			setShowModal(false);
-			setActiveRoute(fly_route);
-
-			postFly()
-				.then((updatedCarrier) => {
-					setCarrier(updatedCarrier);
-					const fly_route = {...activeRoute, active: false};
-					setActiveRoute(false);
-				})
-				.catch((error) => {
-					console.error('Error in handleFly:', error);
-				});
-		} // In the handleFly function
-		else if (!selectedFlyPlane && destinationAirport) {
-			setAlerts((prevAlerts) => [...prevAlerts, 'No plane selected']);
+		} else if (!selectedFlyPlane || !destinationAirport) {
+			setAlerts((prevAlerts) => [...prevAlerts, 'No plane selected or destination not set']);
 		}
 	};
 
@@ -189,10 +185,10 @@ function App() {
 						</Marker>
 					);
 				})}
-				{activeRoute && activeRoute.active && <TrackingMarker positions={[activeRoute.departure_coords, activeRoute.arrival_coords]} icon={airplaneIcon} transitionTime={activeRoute.flight_time * 1000} />}
+				{activeRoute && <TrackingMarker positions={[activeRoute.departure_coords, activeRoute.arrival_coords]} icon={airplaneIcon} transitionTime={activeRoute.flight_time * 1000} />}
 			</MapContainer>
 			{showModal && (
-				<Modal carrier={carrier} setCarrier={setCarrier} onClose={handleCloseModal} planes={carrier.airplanes} type={modalContent} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectedFlyPlane={setSelectedFlyPlane} searchResults={searchResults} handleSearch={handleSearch} destinationAirport={destinationAirport} setDestinationAirport={setDestinationAirport} handleFly={handleFly}>
+				<Modal carrier={carrier} setCarrier={setCarrier} onClose={handleCloseModal} planes={carrier.airplanes} type={modalContent} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectedFlyPlane={setSelectedFlyPlane} searchResults={searchResults} handleSearch={handleSearch} destinationAirport={destinationAirport} setDestinationAirport={setDestinationAirport} handleFly={handleFly} isFlyDisabled={isFlyDisabled}>
 					<div>HELLO</div>
 				</Modal>
 			)}
@@ -211,12 +207,3 @@ function App() {
 }
 
 export default App;
-
-/* useEffect(() => {
-	const getAirportPosition = async () => {
-		const coords = await fetchAirportCoords('EFHK');
-		setPosition(coords);
-		setCenter(coords);
-	};
-	getAirportPosition();
-}, []); */

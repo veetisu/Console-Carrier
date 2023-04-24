@@ -71,27 +71,40 @@ export const postBuyFuel = (amount, carrierId) => {
 		.catch((error) => console.error(error));
 };
 
-export const postRoute = (departure, arrival, plane_id) => {
+export const postFly = async (plane_id: number, departure: string, arrival: string) => {
 	const requestOptions = {
 		method: 'POST',
 		headers: {'Content-Type': 'application/json'},
-		body: JSON.stringify({departure, arrival, plane_id})
+		body: JSON.stringify({departure, arrival})
 	};
+	try {
+		const response = await fetch(`http://localhost:5000/fly/${plane_id}`, requestOptions);
 
-	return fetch('http://localhost:5000/post_route', requestOptions)
-		.then((response) => response.json())
-		.catch((error) => console.error(error));
+		if (!response.ok) {
+			throw new Error(`Error sending plane to fly: ${response.status} ${response.statusText}`);
+		}
+
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.error('Error in postFly:', error.message);
+		throw error;
+	}
 };
-export const postFly = () => {
-	const requestOptions = {
-		method: 'POST',
-		headers: {'Content-Type': 'application/json'},
-		body: ''
-	};
+export const getLanding = async (plane_id: number): Promise<Carrier> => {
+	try {
+		const response = await fetch(`${baseURL}/land/${plane_id}`);
 
-	return fetch('http://localhost:5000/fly', requestOptions)
-		.then((response) => response.json())
-		.catch((error) => console.error(error));
+		if (!response.ok) {
+			throw new Error(`Error landing plane: ${response.status} ${response.statusText}`);
+		}
+
+		const data = await response.json();
+		return new Carrier(data);
+	} catch (error) {
+		console.error('Error in getLanding:', error.message);
+		throw error;
+	}
 };
 
 export const postSearch = async (searchTerm: string, selectedSizes: Size[], selectedContinents: Continent[]) => {
@@ -104,7 +117,6 @@ export const postSearch = async (searchTerm: string, selectedSizes: Size[], sele
 			selectedContinents
 		})
 	};
-
 	try {
 		const response = await fetch(`${baseURL}/search_airports`, requestOptions);
 		const data = await response.json();

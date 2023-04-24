@@ -1,0 +1,13 @@
+"filename", "language", "JSON with Comments", "JSON", "HTML", "TypeScript", "JavaScript", "toml", "XML", "comment", "blank", "total"
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\Pipfile", "toml", 0, 0, 0, 0, 0, -9, 0, 0, -4, -13
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\Pipfile.lock", "JSON", 0, -125, 0, 0, 0, 0, 0, 0, -1, -126
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\index.html", "HTML", 0, 0, -22, 0, 0, 0, 0, -4, -3, -29
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\package-lock.json", "JSON", 0, -2249, 0, 0, 0, 0, 0, 0, -1, -2250
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\package.json", "JSON", 0, -36, 0, 0, 0, 0, 0, 0, -1, -37
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\public\vite.svg", "XML", 0, 0, 0, 0, 0, 0, -1, 0, 0, -1
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\test.html", "HTML", 0, 0, -19, 0, 0, 0, 0, 0, -1, -20
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\tsconfig.json", "JSON with Comments", -21, 0, 0, 0, 0, 0, 0, 0, -1, -22
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\tsconfig.node.json", "JSON", 0, -9, 0, 0, 0, 0, 0, 0, -1, -10
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\vite.config.ts", "TypeScript", 0, 0, 0, -5, 0, 0, 0, -1, -2, -8
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\vite.config.ts.timestamp-1679413222452.mjs", "JavaScript", 0, 0, 0, 0, -8, 0, 0, -2, -1, -11
+"Total", "-", -21, -2419, -41, -5, -8, -9, -1, -7, -16, -2527

@@ -1,27 +1,24 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import './ShopView.css';
-import {useState, useEffect} from 'react';
 import {fetchCfg} from '../../../Map/api';
 
 const ShopView = () => {
 	const shops = ['Planes', 'Staff', 'Upgrades'];
 	const [activeShop, setActiveShop] = useState<string | false>(false);
-	const [planeCfg, setPlaneCfg] = useState<object[] | false>(false);
+	const [planes, setPlanes] = useState([]);
+	const [selectedPlane, setSelectedPlane] = useState(null);
 
 	useEffect(() => {
-		fetchCfg()
-			.then((response) => {
-				// Handle the response here
-				console.log(response);
-			})
-			.catch((error) => {
-				// Handle any errors here
-				console.error(error);
-			});
+		fetchCfg().then((data) => setPlanes(data));
 	}, []);
 
-	const onClick = (shop: string) => {
-		setActiveShop(shop);
+	const handlePlaneClick = (plane) => {
+		setSelectedPlane(plane);
+	};
+
+	const buyPlane = (plane) => {
+		console.log(`Buying ${plane.name}`);
+		// Implement the logic for buying the plane here
 	};
 
 	return (
@@ -32,7 +29,7 @@ const ShopView = () => {
 						{shops.map((shop, index) => {
 							return (
 								<li key={index} className="nav-item w-100">
-									<a className="nav-link" href="#" onClick={() => onClick(shop.toLowerCase())}>
+									<a className="nav-link" href="#" onClick={() => setActiveShop(shop.toLowerCase())}>
 										<div className="card">
 											<div className="card-body d-flex align-items-center">
 												<span>{shop}</span>
@@ -45,7 +42,41 @@ const ShopView = () => {
 					</ul>
 				</div>
 			</nav>
-			{activeShop === 'planes' && <h1>Planes</h1>}
+			<div className="row">
+				{activeShop === 'planes' && (
+					<div className="planes-container">
+						<div className="row">
+							<div className="col-md-6">
+								<div className="planes-list">
+									{planes.map((plane, index) => (
+										<div key={index} className="plane-item" onClick={() => handlePlaneClick(plane)}>
+											<div className="plane-image-name">
+												<img src={`../../img/planes/${plane.type}.png`} alt={plane.name} className="plane-img" />
+												<span>{plane.name}</span>
+											</div>
+										</div>
+									))}
+								</div>
+							</div>
+							<div className="col-md-6">
+								{selectedPlane && (
+									<div className="plane-details">
+										<h2>{selectedPlane.name}</h2>
+										<ul>
+											<li>Range: {selectedPlane.range} km</li>
+											<li>Cruise speed: {selectedPlane.cruise_speed} km/h</li>
+											<li>Passenger capacity: {selectedPlane.passenger_capacity}</li>
+											<li>Fuel consumption: {selectedPlane.fuel_consumption} L/km</li>
+											<li>Price: ${selectedPlane.price.toLocaleString()}</li>
+										</ul>
+										<button onClick={() => buyPlane(selectedPlane)}>Buy {selectedPlane.name}</button>
+									</div>
+								)}
+							</div>
+						</div>
+					</div>
+				)}
+			</div>
 		</>
 	);
 };

@@ -1,0 +1,44 @@
+Date : 2023-03-30 11:31:10
+Directory : c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src
+Total : 11 files,  -2504 codes, -7 comments, -16 blanks, all -2527 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| XML                |          1 |         -1 |          0 |          0 |         -1 |
+| TypeScript         |          1 |         -5 |         -1 |         -2 |         -8 |
+| JavaScript         |          1 |         -8 |         -2 |         -1 |        -11 |
+| toml               |          1 |         -9 |          0 |         -4 |        -13 |
+| JSON with Comments |          1 |        -21 |          0 |         -1 |        -22 |
+| HTML               |          2 |        -41 |         -4 |         -4 |        -49 |
+| JSON               |          4 |     -2,419 |          0 |         -4 |     -2,423 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                            | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                               |         11 |     -2,504 |         -7 |        -16 |     -2,527 |
+| ..                                                                                              |         11 |     -2,504 |         -7 |        -16 |     -2,527 |
+| .. (Files)                                                                                      |         10 |     -2,503 |         -7 |        -16 |     -2,526 |
+| ..\public                                                                                       |          1 |         -1 |          0 |          0 |         -1 |
++-------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                        | language           | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\Pipfile                                    | toml               |         -9 |          0 |         -4 |        -13 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\Pipfile.lock                               | JSON               |       -125 |          0 |         -1 |       -126 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\index.html                                 | HTML               |        -22 |         -4 |         -3 |        -29 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\package-lock.json                          | JSON               |     -2,249 |          0 |         -1 |     -2,250 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\package.json                               | JSON               |        -36 |          0 |         -1 |        -37 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\public\vite.svg                            | XML                |         -1 |          0 |          0 |         -1 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\test.html                                  | HTML               |        -19 |          0 |         -1 |        -20 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\tsconfig.json                              | JSON with Comments |        -21 |          0 |         -1 |        -22 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\tsconfig.node.json                         | JSON               |         -9 |          0 |         -1 |        -10 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\vite.config.ts                             | TypeScript         |         -5 |         -1 |         -2 |         -8 |
+| c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\vite.config.ts.timestamp-1679413222452.mjs | JavaScript         |         -8 |         -2 |         -1 |        -11 |
+| Total                                                                                           |                    |     -2,504 |         -7 |        -16 |     -2,527 |
++-------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
