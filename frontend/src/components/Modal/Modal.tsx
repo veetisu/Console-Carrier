@@ -1,7 +1,7 @@
 import React from 'react';
 import './Modal.css';
 import Button from '../Button/Button';
-import Airport from '../../Map/Airport';
+import Airport from '../../types/Airport';
 import {useState} from 'react';
 import {Form, Row, Col} from 'react-bootstrap';
 import SearchBox from './SearchBox';

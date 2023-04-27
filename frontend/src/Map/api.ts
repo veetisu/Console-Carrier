@@ -1,7 +1,7 @@
 const baseURL = 'http://localhost:5000';
 import {Plane} from '../components/Modal/Modal';
 import {Size, Continent} from './../types/types';
-import Airport from './Airport';
+import Airport from '../types/Airport';
 import Carrier from '../types/carrier';
 
 export async function fetchAirports() {
@@ -18,7 +18,7 @@ export async function fetchAirportCoords(code: string): Promise<[number, number]
 }
 export const fetchRoute = async () => {
 	try {
-		const response = await fetch('http://127.0.0.1:5000/route');
+		const response = await fetch(baseURL + '/route');
 		const data = await response.json();
 		return data;
 	} catch (error) {
@@ -28,7 +28,7 @@ export const fetchRoute = async () => {
 
 export const fetchCarrier = async (): Promise<Carrier> => {
 	try {
-		const response = await fetch('http://127.0.0.1:5000/carrier');
+		const response = await fetch(baseURL + '/carrier');
 		const data = await response.json();
 		return new Carrier(data);
 	} catch (error) {
@@ -38,7 +38,7 @@ export const fetchCarrier = async (): Promise<Carrier> => {
 
 export const fetchFuelPrice = async () => {
 	try {
-		const response = await fetch('http://127.0.0.1:5000/fuel_price');
+		const response = await fetch(baseURL + '/fuel_price');
 		const data = await response.json();
 		return data;
 	} catch (error) {

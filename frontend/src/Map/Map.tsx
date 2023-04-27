@@ -5,9 +5,9 @@ import 'leaflet/dist/leaflet.css';
 import {fetchAirports, fetchAirportCoords, fetchRoute, fetchCarrier, postFly, getLanding} from './api';
 import Navbar from '../components/NavBar/NavBar';
 import './Map.css';
-import TrackingMarker from './TrackingMarker';
+import TrackingMarker from '../components/TrackingMarker/TrackingMarker';
 import Modal from '../components/Modal/Modal';
-import Airport from './Airport';
+import Airport from '../types/Airport';
 import Button from '../components/Button/Button';
 import {Plane} from '../components/Modal/Modal';
 import CustomAlert from '../components/Alert/Alert';
@@ -17,6 +17,7 @@ import {Route} from './../types/Airplane';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import Carrier from '../types/Carrier';
+import {createAirportObjects} from './App';
 
 const baseURL = 'http://127.0.0.1:5000';
 const ENV = 'dev';
@@ -187,14 +188,9 @@ function App() {
 	function handleSearch(searchResults: any) {
 		setSearchResults(searchResults);
 	}
-	function handleMoreFuelClick() {
+	function handleMoreFuelClick(): void {
 		setShowModal(true);
 		setModalContent('fuel');
-	}
-	async function createAirportObjects(): Promise<Airport[]> {
-		const airportsData = await fetchAirports();
-		const airports = airportsData.map((airportData) => new Airport(...Object.values(airportData)));
-		return airports;
 	}
 
 	useEffect(() => {
