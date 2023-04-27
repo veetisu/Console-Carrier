@@ -1,6 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import Login from './Login';
+import ReactDOM from 'react-dom/client';
+import Login from './components/Login/Login';
 import Map from './Map/Map';
 import {BrowserRouter, Routes, Route, useNavigate} from 'react-router-dom';
 
@@ -28,5 +28,4 @@ function App() {
 		</div>
 	);
 }
-
-ReactDOM.createRoot(document.getElementById('root')).render(<AppRouter />);
+ReactDOM.createRoot(document.getElementById('root')!).render(<AppRouter />);

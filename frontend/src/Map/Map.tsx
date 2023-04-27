@@ -5,9 +5,9 @@ import 'leaflet/dist/leaflet.css';
 import {fetchAirports, fetchAirportCoords, fetchRoute, fetchCarrier, postFly, getLanding} from './api';
 import Navbar from '../components/NavBar/NavBar';
 import './Map.css';
-import TrackingMarker from './TrackingMarker';
+import TrackingMarker from '../components/TrackingMarker/TrackingMarker';
 import Modal from '../components/Modal/Modal';
-import Airport from './Airport';
+import Airport from '../types/Airport';
 import Button from '../components/Button/Button';
 import {Plane} from '../components/Modal/Modal';
 import CustomAlert from '../components/Alert/Alert';
@@ -16,6 +16,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import {Route} from './../types/Airplane';
 
 import 'bootstrap/dist/css/bootstrap.css';
+import Carrier from '../types/Carrier';
+import {createAirportObjects} from './App';
 
 const baseURL = 'http://127.0.0.1:5000';
 
@@ -56,19 +58,17 @@ function App() {
 		[-90, -180],
 		[90, 180]
 	];
-
 	const [routes, setRoutes] = useState<Route[] | null>(null);
 	const [showModal, setShowModal] = useState(false);
 	const [modalContent, setModalContent] = useState<string | false>(false);
 	const [modalAirport, setModalAirport] = useState<Airport | false>(false);
-	const [carrier, setCarrier] = useState<object | null>(null);
+	const [carrier, setCarrier] = useState<Carrier | null>(null);
 	const [selectedPlane, setSelectedPlane] = useState<Plane | null>(null);
 	const [selectedFlyPlane, setSelectedFlyPlane] = useState<Plane | false>(false);
 	const [searchResults, setSearchResults] = useState<Airport[] | false>(false);
 	const [destinationAirport, setDestinationAirport] = useState<Airport | false>(false);
 	const [activeRoute, setActiveRoute] = useState<any | false>(false);
 	const [alerts, setAlerts] = useState<string[]>([]);
-	const [isFlyDisabled, setIsFlyDisabled] = useState(false);
 
 	const handleRemoveAlert = (index: number) => {
 		setAlerts((prevAlerts) => prevAlerts.filter((_, i) => i !== index));
@@ -138,14 +138,9 @@ function App() {
 	function handleSearch(searchResults: any) {
 		setSearchResults(searchResults);
 	}
-	function handleMoreFuelClick() {
+	function handleMoreFuelClick(): void {
 		setShowModal(true);
 		setModalContent('fuel');
-	}
-	async function createAirportObjects(): Promise<Airport[]> {
-		const airportsData = await fetchAirports();
-		const airports = airportsData.map((airportData) => new Airport(...Object.values(airportData)));
-		return airports;
 	}
 
 	useEffect(() => {
@@ -188,7 +183,7 @@ function App() {
 				{activeRoute && <TrackingMarker positions={[activeRoute.departure_coords, activeRoute.arrival_coords]} icon={airplaneIcon} transitionTime={activeRoute.flight_time * 1000} />}
 			</MapContainer>
 			{showModal && (
-				<Modal carrier={carrier} setCarrier={setCarrier} onClose={handleCloseModal} planes={carrier.airplanes} type={modalContent} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectedFlyPlane={setSelectedFlyPlane} searchResults={searchResults} handleSearch={handleSearch} destinationAirport={destinationAirport} setDestinationAirport={setDestinationAirport} handleFly={handleFly} isFlyDisabled={isFlyDisabled}>
+				<Modal carrier={carrier} setCarrier={setCarrier} onClose={handleCloseModal} planes={carrier.airplanes} type={modalContent} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectedFlyPlane={setSelectedFlyPlane} searchResults={searchResults} handleSearch={handleSearch} destinationAirport={destinationAirport} setDestinationAirport={setDestinationAirport} handleFly={handleFly} isFlyDisabled={false}>
 					<div>HELLO</div>
 				</Modal>
 			)}
