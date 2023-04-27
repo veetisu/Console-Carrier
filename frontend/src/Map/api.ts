@@ -71,11 +71,11 @@ export const postBuyFuel = (amount, carrierId) => {
 		.catch((error) => console.error(error));
 };
 
-export const postFly = async (plane_id: number, departure: string, arrival: string) => {
+export const postFly = async (plane_id: number, departure: string, arrival: string, continous: boolean) => {
 	const requestOptions = {
 		method: 'POST',
 		headers: {'Content-Type': 'application/json'},
-		body: JSON.stringify({departure, arrival})
+		body: JSON.stringify({departure, arrival, continous})
 	};
 	try {
 		const response = await fetch(`http://localhost:5000/fly/${plane_id}`, requestOptions);

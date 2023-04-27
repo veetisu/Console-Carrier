@@ -2,6 +2,7 @@
   "devDependencies": {
     "@types/geodesy": "^2.2.3",
     "@types/leaflet": "^1.9.3",
+    "@types/velocity-animate": "^2.0.1",
     "typescript": "^4.9.5"
   },
   "dependencies": {

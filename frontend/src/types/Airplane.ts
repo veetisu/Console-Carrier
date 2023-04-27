@@ -103,4 +103,6 @@ export interface Route {
 	fuel_required: number;
 	flight_time: number;
 	status: string;
+	continous: boolean;
+	iteration: number;
 }

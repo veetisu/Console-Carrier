@@ -28,6 +28,7 @@ interface ModalProps {
 	carrier: any;
 	setCarrier: (carrier: Carrier) => void;
 	isFlyDisabled: boolean;
+	onContinuousChange: (value: boolean) => void;
 }
 
 export interface Plane {
@@ -57,7 +58,7 @@ export interface Plane {
 }
 
 function handleClick(plane: Plane) {}
-const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSelect, selectedFlyPlane, setSelectedFlyPlane, searchResults, handleSearch, destinationAirport, setDestinationAirport, handleFly, carrier, setCarrier, isFlyDisabled}) => {
+const Modal: React.FC<ModalProps> = ({onContinuousChange, onClose, type, planes, airport, onPlaneSelect, selectedFlyPlane, setSelectedFlyPlane, searchResults, handleSearch, destinationAirport, setDestinationAirport, handleFly, carrier, setCarrier, isFlyDisabled}) => {
 	return (
 		<div className="modal mx-0">
 			<div className="modal-content">
@@ -172,7 +173,7 @@ const Modal: React.FC<ModalProps> = ({onClose, type, planes, airport, onPlaneSel
 							</div>
 						</div>
 						<div className="col-md-6 h-100">
-							<SearchBox onSearch={handleSearch}></SearchBox>
+							<SearchBox onSearch={handleSearch} onContinuousChange={onContinuousChange}></SearchBox>
 							<div className="scrollable-content">
 								<div className="list-group mt-3">
 									{searchResults &&
