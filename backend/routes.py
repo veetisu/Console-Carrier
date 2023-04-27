@@ -152,6 +152,7 @@ class Router:
             data = request.json
             departure = data['departure']
             arrival = data['arrival']
+            continous = data['continous']
             print(departure, arrival)
             departure = db_handler.add_airport(departure)
             arrival = db_handler.add_airport(arrival)
@@ -159,7 +160,7 @@ class Router:
             plane = next(
                 (plane for plane in carrier.airplanes if plane.id == plane_id), None)
             print(plane)
-            route = Route(departure, arrival, plane)
+            route = Route(departure, arrival, plane, continous)
             carrier.active_routes[plane_id] = route
             print("Active routes:", carrier.active_routes)
             if route is not None:
@@ -174,16 +175,25 @@ class Router:
             try:
                 # Retrieve the route object and the carrier object from your data store
                 route = carrier.active_routes.get(plane_id)
+                if not route:
+                    print(f"Route not found for plane_id: {plane_id}")
+                    return jsonify({"error": f"Route not found for plane_id: {plane_id}"}), 400
+
+                print(f"Landing plane with id: {plane_id}")
                 result = route.fly(carrier)
 
                 if not result:
+                    print(f"Failed to land the plane with id: {plane_id}")
                     return jsonify({"error": "Failed to land the plane"}), 400
 
+                print(f"Successfully landed plane with id: {plane_id}")
                 return return_carrier()
             except Exception as e:
+                print(f"Error in land_plane for plane_id: {plane_id}")
                 print(str(e))
                 traceback.print_exc()
                 return jsonify({"error": str(e)}), 500
+
 
     def run(self):
         self.router.run(debug=True)

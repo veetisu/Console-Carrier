@@ -6,12 +6,14 @@ import {postSearch} from '../../Map/api';
 
 interface SearchBoxProps {
 	onSearch: (data: any) => void;
+	onContinuousChange: (value: boolean) => void;
 }
 
-const SearchBox: React.FC<SearchBoxProps> = ({onSearch}) => {
+const SearchBox: React.FC<SearchBoxProps> = ({onSearch, onContinuousChange}) => {
 	const [searchTerm, setSearchTerm] = useState('');
 	const [selectedSizes, setSelectedSizes] = useState<Size[]>([]);
 	const [selectedContinents, setSelectedContinents] = useState<Continent[]>([]);
+	const [isContinuous, setIsContinuous] = useState(false);
 
 	const sizes: Size[] = ['small', 'medium', 'large'];
 	const continents: Continent[] = ['africa', 'asia', 'europe', 'north-america', 'south-america', 'australia'];
@@ -34,8 +36,15 @@ const SearchBox: React.FC<SearchBoxProps> = ({onSearch}) => {
 		}
 	};
 
+	const handleContinuousChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setIsContinuous(event.target.checked);
+		// Call the onContinuousChange function with the new value
+		onContinuousChange(event.target.checked);
+	};
+
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
+		// Pass the isContinuous state value when calling postSearch
 		const searchData = await postSearch(searchTerm, selectedSizes, selectedContinents);
 		onSearch(searchData);
 	};
@@ -55,6 +64,9 @@ const SearchBox: React.FC<SearchBoxProps> = ({onSearch}) => {
 							</button>
 						</div>
 						<div className="row">
+							<button type="submit" className="btn btn-primary mx-5">
+								Search
+							</button>
 							<div className="col-md-6 mb-3">
 								<label className="form-label">Size</label>
 								<div className="dropdown">
@@ -87,6 +99,12 @@ const SearchBox: React.FC<SearchBoxProps> = ({onSearch}) => {
 											</li>
 										))}
 									</ul>
+									<div className="row">
+										<div className="col-md-12 mb-3">
+											<label className="form-label">Continuous Flight</label>
+											<input type="checkbox" value={isContinuous} checked={isContinuous} onChange={handleContinuousChange} />
+										</div>
+									</div>
 									<button type="submit" className="btn btn-primary mx-5">
 										Search
 									</button>

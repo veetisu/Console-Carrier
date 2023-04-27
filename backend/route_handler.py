@@ -40,7 +40,7 @@ class Route():
     """"This class represents a route between two different airports"""
 
     # DO: Instances of this need to identifiable somehow
-    def __init__(self, departure_airport: Airport, arrival_airport: Airport, plane: Airplane):
+    def __init__(self, departure_airport: Airport, arrival_airport: Airport, plane: Airplane, continous: bool, iteration=0):
 
         self.plane = plane
         self.departure_airport = departure_airport
@@ -51,6 +51,8 @@ class Route():
                                self.arrival_airport.longitude)
         self.route_lenght = geopy.distance.distance(
             self.departure_coords, self.arrival_coords).km
+        self.continous = continous
+        self.iteration = 0
         self.flown = False
         self.vip = None
         self.has_vip = self.generate_vip()

@@ -20,6 +20,7 @@ import Carrier from '../types/Carrier';
 import {createAirportObjects} from './App';
 
 const baseURL = 'http://127.0.0.1:5000';
+const ENV = 'dev';
 
 interface Marker {
 	geocode: [number, number];
@@ -58,7 +59,8 @@ function App() {
 		[-90, -180],
 		[90, 180]
 	];
-	const [routes, setRoutes] = useState<Route[] | null>(null);
+
+	const [routes, setRoutes] = useState<{[planeId: number]: Route} | null>(null);
 	const [showModal, setShowModal] = useState(false);
 	const [modalContent, setModalContent] = useState<string | false>(false);
 	const [modalAirport, setModalAirport] = useState<Airport | false>(false);
@@ -69,6 +71,8 @@ function App() {
 	const [destinationAirport, setDestinationAirport] = useState<Airport | false>(false);
 	const [activeRoute, setActiveRoute] = useState<any | false>(false);
 	const [alerts, setAlerts] = useState<string[]>([]);
+	const [isFlyDisabled, setIsFlyDisabled] = useState(false);
+	const [isContinuous, setIsContinuous] = useState(false);
 
 	const handleRemoveAlert = (index: number) => {
 		setAlerts((prevAlerts) => prevAlerts.filter((_, i) => i !== index));
@@ -103,18 +107,64 @@ function App() {
 		setModalContent('flight_selection');
 	};
 	const handleFly = () => {
-		if (destinationAirport && selectedFlyPlane) {
-			postFly(selectedFlyPlane.id, selectedFlyPlane.airport.icao, destinationAirport.ident)
+		const flyBack = (route, origin, destination) => {
+			route.iteration += 1;
+			postFly(route.plane.id, origin, destination, isContinuous)
 				.then((routeJson) => {
-					const route: Route = routeJson;
-					console.log();
-					if (route != null) {
-						setActiveRoute(route);
+					const updatedRoute: Route = routeJson;
+					if (updatedRoute != null) {
+						setActiveRoute(updatedRoute);
+						setRoutes({...routes, [updatedRoute.plane.id]: updatedRoute});
 					} else {
 						throw new Error('Invalid route object');
 					}
 					setTimeout(() => {
-						getLanding(route.plane.id);
+						getLanding(updatedRoute.plane.id).then((carrier) => {
+							setCarrier(carrier);
+						});
+						if (updatedRoute.continous) {
+							flyBack(updatedRoute, destination, origin);
+						}
+						setActiveRoute(false);
+					}, updatedRoute.flight_time * 1000);
+				})
+				.catch((error) => {
+					console.error('Error in flyBack:', error);
+					setAlerts((prevAlerts) => [...prevAlerts, 'Error flying plane back']);
+				});
+		};
+
+		if (destinationAirport && selectedFlyPlane) {
+			postFly(selectedFlyPlane.id, selectedFlyPlane.airport.icao, destinationAirport.ident, isContinuous)
+				.then((routeJson) => {
+					const route: Route = routeJson;
+					if (route != null) {
+						setActiveRoute(route);
+						setRoutes({...routes, [selectedFlyPlane.id]: route});
+					} else {
+						throw new Error('Invalid route object');
+					}
+					setTimeout(() => {
+						getLanding(route.plane.id).then((carrier) => {
+							setCarrier(carrier);
+						});
+						if (route.continous) {
+							flyBack(route, destinationAirport.ident, selectedFlyPlane.airport.icao);
+						} else {
+							setRoutes((prevRoutes) => {
+								if (prevRoutes) {
+									// Create a copy of the previous routes object
+									const updatedRoutes = {...prevRoutes};
+									// Remove the flown route from the updatedRoutes object
+									delete updatedRoutes[selectedFlyPlane.id];
+									// Return the updated routes object
+									return updatedRoutes;
+								} else {
+									return prevRoutes;
+								}
+							});
+						}
+
 						setActiveRoute(false);
 					}, route.flight_time * 1000);
 				})
@@ -150,7 +200,6 @@ function App() {
 		}
 		loadAirports();
 	}, []);
-
 	return (
 		<>
 			<Navbar handleMoreFuelClick={handleMoreFuelClick} carrier={carrier} onClick={handleNavItemClick} />
@@ -180,10 +229,10 @@ function App() {
 						</Marker>
 					);
 				})}
-				{activeRoute && <TrackingMarker positions={[activeRoute.departure_coords, activeRoute.arrival_coords]} icon={airplaneIcon} transitionTime={activeRoute.flight_time * 1000} />}
+				{routes && Object.entries(routes).map(([planeId, route]) => <TrackingMarker key={planeId} markerId={planeId} positions={[route.departure_coords, route.arrival_coords]} icon={airplaneIcon} transitionTime={route.flight_time * 1000} />)}
 			</MapContainer>
 			{showModal && (
-				<Modal carrier={carrier} setCarrier={setCarrier} onClose={handleCloseModal} planes={carrier.airplanes} type={modalContent} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectedFlyPlane={setSelectedFlyPlane} searchResults={searchResults} handleSearch={handleSearch} destinationAirport={destinationAirport} setDestinationAirport={setDestinationAirport} handleFly={handleFly} isFlyDisabled={false}>
+				<Modal carrier={carrier} setCarrier={setCarrier} onClose={handleCloseModal} planes={carrier.airplanes} type={modalContent} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectedFlyPlane={setSelectedFlyPlane} searchResults={searchResults} handleSearch={handleSearch} destinationAirport={destinationAirport} setDestinationAirport={setDestinationAirport} handleFly={handleFly} isFlyDisabled={isFlyDisabled} onContinuousChange={(value: boolean) => setIsContinuous(value)}>
 					<div>HELLO</div>
 				</Modal>
 			)}
