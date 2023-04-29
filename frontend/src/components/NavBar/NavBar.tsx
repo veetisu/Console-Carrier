@@ -7,7 +7,7 @@ interface Carrier {
 	[key: string]: any;
 }
 interface NavbarProps {
-	carrier: Carrier;
+	carrier: Carrier | null;
 	onClick: (type: string) => void;
 	handleMoreFuelClick: () => void;
 }

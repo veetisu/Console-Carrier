@@ -1,8 +1,8 @@
-const baseURL = 'http://localhost:5000';
+const baseURL = 'http://localhost:5000/';
 import {Plane} from '../components/Modal/Modal';
 import {Size, Continent} from './../types/types';
 import Airport from '../types/Airport';
-import Carrier from '../types/carrier';
+import Carrier from '../types/Carrier';
 
 export async function fetchAirports() {
 	const response = await fetch(baseURL + '/airports');
@@ -26,13 +26,17 @@ export const fetchRoute = async () => {
 	}
 };
 
-export const fetchCarrier = async (): Promise<Carrier> => {
+export const fetchCarrier = async (): Promise<Carrier | null> => {
 	try {
-		const response = await fetch(baseURL + '/carrier');
-		const data = await response.json();
+		const res = await fetch(`${baseURL}/carrier`);
+		if (!res.ok) {
+			throw new Error('Error fetching carrier data');
+		}
+		const data = await res.json();
 		return new Carrier(data);
 	} catch (error) {
 		console.error('Error fetching carrier:', error);
+		return null;
 	}
 };
 
@@ -55,7 +59,8 @@ export const fetchCfg = async () => {
 		console.error('Error fetching route:', error);
 	}
 };
-export const postBuyFuel = (amount, carrierId) => {
+export const postBuyFuel = (amount: number, carrierId: number) => {
+	// Added types to parameters
 	const requestOptions = {
 		method: 'POST',
 		headers: {'Content-Type': 'application/json'},
@@ -86,7 +91,7 @@ export const postFly = async (plane_id: number, departure: string, arrival: stri
 
 		const data = await response.json();
 		return data;
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error in postFly:', error.message);
 		throw error;
 	}
@@ -101,7 +106,7 @@ export const getLanding = async (plane_id: number): Promise<Carrier> => {
 
 		const data = await response.json();
 		return new Carrier(data);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error in getLanding:', error.message);
 		throw error;
 	}
@@ -120,7 +125,8 @@ export const postSearch = async (searchTerm: string, selectedSizes: Size[], sele
 	try {
 		const response = await fetch(`${baseURL}/search_airports`, requestOptions);
 		const data = await response.json();
-		const airports = data.map((airportData) => {
+		const airports = data.map((airportData: any) => {
+			// Added type to airportData parameter
 			return new Airport(airportData[0], airportData[1], airportData[2], airportData[3], airportData[4], airportData[5], airportData[6], airportData[7], airportData[8], airportData[9], airportData[10], airportData[11], airportData[12], airportData[13], airportData[14], airportData[15], airportData[16], airportData[17]);
 		});
 		return airports;

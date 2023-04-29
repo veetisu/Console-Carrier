@@ -67,7 +67,7 @@ export default class Airplane implements Plane {
 	// Add other methods to modify the airplane object
 }
 
-interface Airport {
+export class Airport {
 	id: string;
 	icao: string;
 	type: string;
@@ -80,16 +80,24 @@ interface Airport {
 	iso_region: string;
 	municipality: string;
 	country_name: string;
+
+	constructor(data: any) {
+		this.id = data.id;
+		this.icao = data.icao;
+		this.type = data.type;
+		this.name = data.name;
+		this.latitude = data.latitude;
+		this.longitude = data.longitude;
+		this.elevation_feet = data.elevation_feet;
+		this.continent = data.continent;
+		this.iso_country = data.iso_country;
+		this.iso_region = data.iso_region;
+		this.municipality = data.municipality;
+		this.country_name = data.country_name;
+	}
 }
 
-interface Vip {
-	name: string;
-	value: number;
-	vip_message: string;
-	result_message: string;
-}
-
-export interface Route {
+export class Route {
 	plane: Airplane;
 	departure_airport: Airport;
 	arrival_airport: Airport;
@@ -105,4 +113,59 @@ export interface Route {
 	status: string;
 	continous: boolean;
 	iteration: number;
+
+	constructor(data: any) {
+		this.plane = new Airplane(data.plane);
+		this.departure_airport = new Airport(data.departure_airport);
+		this.arrival_airport = new Airport(data.arrival_airport);
+		this.departure_coords = data.departure_coords;
+		this.arrival_coords = data.arrival_coords;
+		this.route_length = data.route_length;
+		this.flown = data.flown;
+		this.vip = data.vip ? new Vip(this) : null; // Pass the Route object (this) to the Vip constructor
+		this.has_vip = data.has_vip;
+		this.vip_accepted = data.vip_accepted;
+		this.fuel_required = data.fuel_required;
+		this.flight_time = data.flight_time;
+		this.status = data.status;
+		this.continous = data.continous;
+		this.iteration = data.iteration;
+	}
+}
+interface VipData {
+	name: string;
+	value: number;
+	vip_message: string;
+	result_message: string;
+}
+
+export class Vip {
+	name: string;
+	value: number;
+	vip_message: string;
+	result_message: string;
+
+	constructor(route: Route) {
+		const vips: VipData[] = [
+			{
+				name: 'Sauli Niinistö',
+				value: 1000,
+				vip_message: `I need to get to ${route.arrival_airport.name} with Jenni.`,
+				result_message: 'You got 1000€ from Finnish valtion kassa'
+			},
+			{
+				name: 'Vladimir Putin',
+				value: -2000,
+				vip_message: `I need help with warcrimes at ${route.arrival_airport.name}`,
+				result_message: 'The UN has fined you 2000€ for collaborating with a known war criminal'
+			}
+		];
+
+		const vip = vips[Math.floor(Math.random() * vips.length)];
+
+		this.name = vip.name;
+		this.value = vip.value;
+		this.vip_message = vip.vip_message;
+		this.result_message = vip.result_message;
+	}
 }

@@ -10,25 +10,30 @@ import {postSearch} from '../../Map/api';
 import FuelView from './FuelView/FuelView';
 import ShopView from './ShopView/ShopView';
 import Carrier from '../../types/Carrier';
+import RouteView from './RouteView/RouteView';
+import {Routes} from 'react-router-dom';
+import {Route} from '../../types/Airplane';
 
 interface ModalProps {
 	show: boolean;
 	onClose: () => void;
 	type: string;
 	planes: any[];
-	airport?: Airport;
+	airport?: Airport | false;
 	onPlaneSelect: (plane: Plane) => void;
-	selectedFlyPlane: Plane;
+	selectedFlyPlane: Plane | false;
 	setSelectedFlyPlane: (plane: Plane) => void;
-	searchResults: Airport[];
+	searchResults: Airport[] | false;
 	handleSearch: (searchResults: any) => void;
-	destinationAirport: Airport;
+	destinationAirport: Airport | false;
 	setDestinationAirport: (airport: Airport) => void;
 	handleFly: () => void;
 	carrier: any;
 	setCarrier: (carrier: Carrier) => void;
 	isFlyDisabled: boolean;
 	onContinuousChange: (value: boolean) => void;
+	routes: {[planeId: number]: Route};
+	removeRO;
 }
 
 export interface Plane {
@@ -210,6 +215,7 @@ const Modal: React.FC<ModalProps> = ({onContinuousChange, onClose, type, planes,
 				)}
 				{type === 'fuel' && <FuelView onCarrierUpdated={setCarrier} fuelPrice={2} carrier={carrier} onBuyMoreFuel={() => console.log('F')} />}
 				{type === 'shop' && <ShopView></ShopView>}
+				{type == 'route' && <RouteView></RouteView>}
 			</div>
 		</div>
 	);

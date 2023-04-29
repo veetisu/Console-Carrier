@@ -1,5 +1,6 @@
 // Carrier.ts
 import Airplane from './Airplane';
+import {Route} from './Airplane';
 export default class Carrier {
 	name: string;
 	airplanes: Airplane[];
@@ -8,6 +9,7 @@ export default class Carrier {
 	resources: number;
 	fuel: number;
 	money: number;
+	active_routes: {[planeId: number]: Route};
 
 	constructor(data: any) {
 		this.name = data.name;
@@ -17,6 +19,10 @@ export default class Carrier {
 		this.resources = data.resources;
 		this.fuel = data.fuel;
 		this.money = data.money;
+
+		// Check if active_routes exists, otherwise set it to an empty object
+		const activeRoutesData = data.active_routes ? data.active_routes : {};
+		this.active_routes = Object.values(activeRoutesData).map((routeData: any) => new Route(routeData));
 	}
 
 	// Add other methods to modify the carrier object

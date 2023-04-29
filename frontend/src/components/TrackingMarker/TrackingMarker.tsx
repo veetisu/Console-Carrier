@@ -28,6 +28,7 @@ const TrackingMarker: React.FC<TrackingMarkerProps> = ({positions, icon, transit
 	const [currentPosition, setCurrentPosition] = useState(positions[0]);
 	const markerRef = useRef<L.Marker | null>(null);
 	const animationRef = useRef<Map<string, {requestID: number; startTime: number}>>(new Map());
+	const [animationState, setAnimationState] = useState({requestID: 0, startTime: 0});
 
 	useEffect(() => {
 		setCurrentPosition(positions[0]);
@@ -36,13 +37,11 @@ const TrackingMarker: React.FC<TrackingMarkerProps> = ({positions, icon, transit
 	useEffect(() => {
 		if (positions.length > 1) {
 			const animateMarker = (timestamp) => {
-				const currentAnimation = animationRef.current.get(markerId);
-
-				if (!currentAnimation.startTime) {
-					currentAnimation.startTime = timestamp;
+				if (!animationState.startTime) {
+					setAnimationState((prevState) => ({...prevState, startTime: timestamp}));
 				}
 
-				const elapsed = timestamp - currentAnimation.startTime;
+				const elapsed = timestamp - animationState.startTime;
 				const progress = Math.min(elapsed / transitionTime, 1);
 
 				const startPos = L.latLng(positions[0]);
@@ -54,29 +53,24 @@ const TrackingMarker: React.FC<TrackingMarkerProps> = ({positions, icon, transit
 				setCurrentPosition([newLat, newLng]);
 
 				if (progress < 1) {
-					currentAnimation.requestID = requestAnimationFrame(animateMarker);
+					const requestID = requestAnimationFrame(animateMarker);
+					setAnimationState((prevState) => ({...prevState, requestID}));
 				} else {
-					currentAnimation.startTime = 0;
+					setAnimationState((prevState) => ({...prevState, startTime: 0}));
 				}
 			};
 
-			const currentAnimation = animationRef.current.get(markerId);
-
-			if (currentAnimation && currentAnimation.requestID) {
-				cancelAnimationFrame(currentAnimation.requestID);
+			if (animationState.requestID) {
+				cancelAnimationFrame(animationState.requestID);
 			}
 
-			if (!currentAnimation) {
-				animationRef.current.set(markerId, {requestID: 0, startTime: 0});
-			}
-
-			animationRef.current.get(markerId).requestID = requestAnimationFrame(animateMarker);
+			const requestID = requestAnimationFrame(animateMarker);
+			setAnimationState((prevState) => ({...prevState, requestID}));
 		}
 
 		return () => {
-			const currentAnimation = animationRef.current.get(markerId);
-			if (currentAnimation && currentAnimation.requestID) {
-				cancelAnimationFrame(currentAnimation.requestID);
+			if (animationState.requestID) {
+				cancelAnimationFrame(animationState.requestID);
 			}
 		};
 	}, [positions, transitionTime, markerId]);

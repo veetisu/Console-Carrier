@@ -18,6 +18,7 @@ import {Route} from './../types/Airplane';
 import 'bootstrap/dist/css/bootstrap.css';
 import Carrier from '../types/Carrier';
 import {createAirportObjects} from './App';
+import MovingMarker from '../components/TrackingMarker/MovingMarker';
 
 const baseURL = 'http://127.0.0.1:5000';
 const ENV = 'dev';
@@ -54,13 +55,13 @@ function App() {
 	const [airports, setAirports] = useState<Airport[]>([]);
 
 	const [position, setPosition] = useState<[number, number] | undefined>(undefined);
-	const [center, setCenter] = useState<[number, number]>([45.4, -75.7]);
+	const [center, setCenter] = useState<[number, number]>([50.1109, 10.258]);
 	const maxBounds: LatLngBoundsLiteral = [
 		[-90, -180],
 		[90, 180]
 	];
 
-	const [routes, setRoutes] = useState<{[planeId: number]: Route} | null>(null);
+	const [routes, setRoutes] = useState<{[planeId: number]: Route}>({});
 	const [showModal, setShowModal] = useState(false);
 	const [modalContent, setModalContent] = useState<string | false>(false);
 	const [modalAirport, setModalAirport] = useState<Airport | false>(false);
@@ -69,7 +70,6 @@ function App() {
 	const [selectedFlyPlane, setSelectedFlyPlane] = useState<Plane | false>(false);
 	const [searchResults, setSearchResults] = useState<Airport[] | false>(false);
 	const [destinationAirport, setDestinationAirport] = useState<Airport | false>(false);
-	const [activeRoute, setActiveRoute] = useState<any | false>(false);
 	const [alerts, setAlerts] = useState<string[]>([]);
 	const [isFlyDisabled, setIsFlyDisabled] = useState(false);
 	const [isContinuous, setIsContinuous] = useState(false);
@@ -81,9 +81,14 @@ function App() {
 	useEffect(() => {
 		const getCarrier = async () => {
 			const carrierData = await fetchCarrier();
-			console.log(carrierData);
-			setCarrier(carrierData);
+			if (carrierData !== null) {
+				console.log(carrierData);
+				setCarrier(carrierData);
+			} else {
+				console.error('Error fetching carrier data');
+			}
 		};
+
 		getCarrier();
 	}, []);
 
@@ -107,26 +112,31 @@ function App() {
 		setModalContent('flight_selection');
 	};
 	const handleFly = () => {
-		const flyBack = (route, origin, destination) => {
+		const flyBack = (route: Route, origin: string, destination: string) => {
 			route.iteration += 1;
-			postFly(route.plane.id, origin, destination, isContinuous)
-				.then((routeJson) => {
-					const updatedRoute: Route = routeJson;
-					if (updatedRoute != null) {
-						setActiveRoute(updatedRoute);
-						setRoutes({...routes, [updatedRoute.plane.id]: updatedRoute});
+			postFly(parseInt(route.plane.id), origin, destination, isContinuous)
+				.then((carrier: Carrier) => {
+					const plane_id = parseInt(route.plane.id);
+					if (carrier != null) {
+						console.log('Fly response for plane', route.plane.id, ':', carrier); // Added log
+
+						if (routes) {
+							setRoutes((prevRoutes) => ({
+								...prevRoutes,
+								[plane_id]: carrier.active_routes[plane_id]
+							}));
+						}
 					} else {
 						throw new Error('Invalid route object');
 					}
 					setTimeout(() => {
-						getLanding(updatedRoute.plane.id).then((carrier) => {
+						getLanding(plane_id).then((carrier) => {
 							setCarrier(carrier);
 						});
-						if (updatedRoute.continous) {
-							flyBack(updatedRoute, destination, origin);
+						if (route.continous) {
+							flyBack(route, destination, origin);
 						}
-						setActiveRoute(false);
-					}, updatedRoute.flight_time * 1000);
+					}, route.flight_time * 1000);
 				})
 				.catch((error) => {
 					console.error('Error in flyBack:', error);
@@ -135,17 +145,18 @@ function App() {
 		};
 
 		if (destinationAirport && selectedFlyPlane) {
-			postFly(selectedFlyPlane.id, selectedFlyPlane.airport.icao, destinationAirport.ident, isContinuous)
-				.then((routeJson) => {
-					const route: Route = routeJson;
+			postFly(parseInt(selectedFlyPlane.id), selectedFlyPlane.airport.icao, destinationAirport.ident, isContinuous)
+				.then((carrier: Carrier) => {
+					const route = carrier.active_routes[selectedFlyPlane.id];
 					if (route != null) {
-						setActiveRoute(route);
-						setRoutes({...routes, [selectedFlyPlane.id]: route});
+						console.log('Fly response for plane', selectedFlyPlane.id, ':', route); // Added log
+						setCarrier(carrier);
+						setRoutes(carrier.active_routes);
 					} else {
 						throw new Error('Invalid route object');
 					}
 					setTimeout(() => {
-						getLanding(route.plane.id).then((carrier) => {
+						getLanding(parseInt(route.plane.id)).then((carrier) => {
 							setCarrier(carrier);
 						});
 						if (route.continous) {
@@ -156,7 +167,7 @@ function App() {
 									// Create a copy of the previous routes object
 									const updatedRoutes = {...prevRoutes};
 									// Remove the flown route from the updatedRoutes object
-									delete updatedRoutes[selectedFlyPlane.id];
+									delete updatedRoutes[parseInt(selectedFlyPlane.id)];
 									// Return the updated routes object
 									return updatedRoutes;
 								} else {
@@ -164,8 +175,6 @@ function App() {
 								}
 							});
 						}
-
-						setActiveRoute(false);
 					}, route.flight_time * 1000);
 				})
 				.catch((error) => {
@@ -200,13 +209,19 @@ function App() {
 		}
 		loadAirports();
 	}, []);
+	useEffect(() => {
+		function loadAirports() {
+			console.log(routes);
+		}
+		loadAirports();
+	}, [routes]);
 	return (
 		<>
 			<Navbar handleMoreFuelClick={handleMoreFuelClick} carrier={carrier} onClick={handleNavItemClick} />
 			<MapContainer
 				className="map-container" // Update the className to use the Map.css rule
 				center={center}
-				zoom={7}
+				zoom={5}
 				scrollWheelZoom={true}
 				minZoom={3}
 				maxBounds={maxBounds}
@@ -215,7 +230,6 @@ function App() {
 				<Map center={center}></Map>
 				<TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' />
 				{position && <Marker position={position} icon={customIcon} />}
-
 				{airports.map((airport) => {
 					const latitude = airport.latitude_deg;
 					const longitude = airport.longitude_deg;
@@ -229,13 +243,14 @@ function App() {
 						</Marker>
 					);
 				})}
-				{routes && Object.entries(routes).map(([planeId, route]) => <TrackingMarker key={planeId} markerId={planeId} positions={[route.departure_coords, route.arrival_coords]} icon={airplaneIcon} transitionTime={route.flight_time * 1000} />)}
+				{routes &&
+					Object.entries(routes).map(([planeId, route]) => {
+						const positions = [route.departure_coords, route.arrival_coords];
+						const duration = route.flight_time * 1000;
+						return <MovingMarker key={planeId} markerId={planeId} departure={positions[0]} duration={duration} arrival={positions[1]} />;
+					})}
 			</MapContainer>
-			{showModal && (
-				<Modal carrier={carrier} setCarrier={setCarrier} onClose={handleCloseModal} planes={carrier.airplanes} type={modalContent} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectedFlyPlane={setSelectedFlyPlane} searchResults={searchResults} handleSearch={handleSearch} destinationAirport={destinationAirport} setDestinationAirport={setDestinationAirport} handleFly={handleFly} isFlyDisabled={isFlyDisabled} onContinuousChange={(value: boolean) => setIsContinuous(value)}>
-					<div>HELLO</div>
-				</Modal>
-			)}
+			{showModal && <Modal show={showModal} carrier={carrier} setCarrier={setCarrier} onClose={handleCloseModal} planes={carrier?.airplanes ?? []} type={modalContent || ''} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectedFlyPlane={setSelectedFlyPlane} searchResults={searchResults} handleSearch={handleSearch} destinationAirport={destinationAirport} setDestinationAirport={setDestinationAirport} handleFly={handleFly} isFlyDisabled={isFlyDisabled} onContinuousChange={(value: boolean) => setIsContinuous(value)}></Modal>}
 			<div className="alerts-container">
 				{alerts.map((alertContent, index) => (
 					<CustomAlert key={index} onClose={() => handleRemoveAlert(index)}>
