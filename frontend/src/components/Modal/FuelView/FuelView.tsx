@@ -21,16 +21,27 @@ const FuelView: React.FC<FuelViewProps> = ({carrier, onCarrierUpdated}) => {
 	const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setAmount(Number(e.target.value));
 	};
-	function onBuyMoreFuel(amount) {
-		postBuyFuel(amount, carrier.id)
-			.then((updatedCarrier) => {
+	async function onBuyMoreFuel(amount) {
+		const totalCost = amount * fuelPrice;
+		if (carrier.money >= totalCost) {
+			try {
+				const updatedCarrier = await postBuyFuel(amount, carrier.id);
 				if (onCarrierUpdated) {
 					onCarrierUpdated(updatedCarrier);
 				}
-			})
-			.catch((error) => {
+			} catch (error) {
 				console.error('Error in onBuyMoreFuel:', error);
-			});
+			}
+		} else {
+			return (
+				<CustomAlert
+					message="Insufficient funds"
+					onClose={() => {
+						console.log('close');
+					}}
+				></CustomAlert>
+			);
+		}
 	}
 
 	const totalCost = amount * fuelPrice;
@@ -53,7 +64,7 @@ const FuelView: React.FC<FuelViewProps> = ({carrier, onCarrierUpdated}) => {
 							<label htmlFor="amount-input" className="form-label">
 								Amount (L)
 							</label>
-							<input type="number" className="form-control" id="amount-input" value={amount} min="0" max="1000" step="1" onChange={handleAmountChange} />
+							<input type="number" className="form-control" id="amount-input" value={amount} min="0" max="10000" step="1" onChange={handleAmountChange} />
 						</div>
 						<p>Total cost: €{totalCost.toFixed(2)}</p>
 						<button className="btn btn-primary" onClick={() => onBuyMoreFuel(amount)}>

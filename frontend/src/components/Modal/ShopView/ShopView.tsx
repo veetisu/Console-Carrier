@@ -1,12 +1,21 @@
 import React, {useState, useEffect} from 'react';
 import './ShopView.css';
 import {fetchCfg} from '../../../Map/api';
+import {buyPlane} from '../../../Map/api';
+import CustomAlert from '../../Alert/Alert';
+import Carrier from '../../../types/Carrier';
 
-const ShopView = () => {
+const shopViewProps = {
+	setCarrier: Function
+};
+
+const ShopView: React.FC<shopViewProps> = ({setCarrier}) => {
 	const shops = ['Planes', 'Staff', 'Upgrades'];
 	const [activeShop, setActiveShop] = useState<string | false>(false);
 	const [planes, setPlanes] = useState([]);
 	const [selectedPlane, setSelectedPlane] = useState(null);
+	const [showAlert, setShowAlert] = useState(false); // Add this line
+	const [alertMessage, setAlertMessage] = useState<string>(''); // Add this line
 
 	useEffect(() => {
 		fetchCfg().then((data) => setPlanes(data));
@@ -16,13 +25,34 @@ const ShopView = () => {
 		setSelectedPlane(plane);
 	};
 
-	const buyPlane = (plane) => {
-		console.log(`Buying ${plane.name}`);
-		// Implement the logic for buying the plane here
-	};
+	async function handleBuyPlane(planeModel: string) {
+		try {
+			const result = await buyPlane(planeModel);
+
+			if (result && result['success']) {
+				setCarrier(result['carrier']);
+			} else {
+				setShowAlert(true);
+				setAlertMessage(result['message'] || 'Error buying plane');
+			}
+		} catch (error) {
+			console.error('Error buying plane:', error);
+			setShowAlert(true);
+			setAlertMessage('Error buying plane');
+		}
+	}
 
 	return (
 		<>
+			{showAlert && (
+				<CustomAlert
+					message={alertMessage}
+					onClose={() => {
+						setShowAlert(false);
+						console.log('close');
+					}}
+				/>
+			)}
 			<nav className="navbar navbar-expand-lg navbar-dark my-nav-bar">
 				<div className="container-fluid">
 					<ul className="navbar-nav w-100">
@@ -69,7 +99,7 @@ const ShopView = () => {
 											<li>Fuel consumption: {selectedPlane.fuel_consumption} L/km</li>
 											<li>Price: ${selectedPlane.price.toLocaleString()}</li>
 										</ul>
-										<button onClick={() => buyPlane(selectedPlane)}>Buy {selectedPlane.name}</button>
+										<button onClick={() => handleBuyPlane(selectedPlane.type)}>Buy {selectedPlane.name}</button>
 									</div>
 								)}
 							</div>

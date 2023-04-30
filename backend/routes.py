@@ -1,5 +1,5 @@
 
-# router.py
+# routes.py
 from flask import Flask, jsonify, Response, request, g
 from route_handler import Route, Airport
 from flask_cors import CORS
@@ -18,6 +18,9 @@ import threading
 from threading import Thread
 from datetime import datetime
 import traceback
+import os
+sys.path.append('backend')
+
 
 def set_interval(func, sec):
     def func_wrapper():
@@ -66,6 +69,10 @@ class Router:
         CORS(self.router, resources={r"*": {"origins": "*"}})
 
         def return_carrier():
+            active_routes_dict = {}
+            for plane_id, route in carrier.active_routes.items():
+                active_routes_dict[plane_id] = route.__dict__
+
             data = {
                 'name': carrier.name,
                 'airplanes': [plane.__dict__ for plane in carrier.airplanes],
@@ -74,6 +81,7 @@ class Router:
                 'resources': carrier.resources,
                 'fuel': carrier.fuel,
                 'money': carrier.money,
+                'active_routes': active_routes_dict
             }
             return json.dumps(data, cls=CustomJSONEncoder)
 
@@ -164,9 +172,10 @@ class Router:
             carrier.active_routes[plane_id] = route
             print("Active routes:", carrier.active_routes)
             if route is not None:
+                if route.fuel_required:
+                    pass
                 route.take_off()
-                response = json.dumps(route, cls=CustomJSONEncoder)
-                return response
+                return return_carrier()
             else:
                 return json.dumps({"error": f"Error in route generation"}, cls=CustomJSONEncoder)
 
@@ -194,14 +203,57 @@ class Router:
                 traceback.print_exc()
                 return jsonify({"error": str(e)}), 500
 
+        @self.router.route('/buy_plane/<string:model>', methods=['POST'])
+        def buy_plane(model):
+            plane = cfg.PLANES.get(model)
+            price = int(plane["price"])
+            
+            if not plane:
+                response = jsonify({"error": "Invalid plane model"})
+                response.status_code = 400
+                return response
+
+            if carrier.money >= price:
+                carrier.money -= price
+                carrier.new_plane(model)
+                response = {"success": True, "message": "Plane purchased successfully.", "carrier": return_carrier()}
+                return response
+            else:
+                response = {"success": False, "message": "Not enough money to buy the plane."}
+            
+                response["status_code"]= 403
+                return response
+        @self.router.route('/sell_plane/<int:plane_id>', methods=['POST'])
+        def sell_plane(plane_id):
+            plane_to_sell = None
+
+            for plane in carrier.airplanes:
+                if plane.id == plane_id:
+                    plane_to_sell = plane
+                    break
+
+            if plane_to_sell:
+                price = cfg.PLANES[plane.type]["price"]
+                carrier.money += price * 0.5  # Give back 50% of the price
+                carrier.airplanes.remove(plane_to_sell)
+                response = {"success": True, "message": "Plane sold successfully.", "carrier": return_carrier()}
+                return response
+            else:
+                response = {"success": False, "message": "Plane not found."}
+                response["status_code"] = 404
+                return response
+            
+
 
     def run(self):
         self.router.run(debug=True)
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
+save_path = os.path.join(base_dir, 'save', 'carrier_save.pickle')
 def load_carrier():
     """Loads carrier from file using pickles. Returns carrier object if found and False otherwise. """
     try:
-        with open('.\save\carrier_save.pickle', 'rb') as f:
+        with open(save_path, 'rb') as f:
             carrier = pickle.load(f)
         return carrier
     except Exception:
@@ -217,10 +269,11 @@ if __name__ == '__main__':
         carrier.new_plane("B350")
         carrier.new_plane("P300")
         carrier.new_plane("L75")
+        carrier.money=100000000
         carrier.save()
-    else:
-        atexit.register(carrier.save)
+    atexit.register(carrier.save)
+    carrier.active_routes={}
     router = Router(carrier, db_handler)
     router.router.wsgi_app = TimingMiddleware(router.router.wsgi_app)
-    set_interval(carrier.save, 10)
+
     router.run()

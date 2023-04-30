@@ -22,8 +22,11 @@ export default class Carrier {
 
 		// Check if active_routes exists, otherwise set it to an empty object
 		const activeRoutesData = data.active_routes ? data.active_routes : {};
-		this.active_routes = Object.values(activeRoutesData).map((routeData: any) => new Route(routeData));
+		this.active_routes = Object.entries(activeRoutesData).reduce((routes, [planeId, routeData]) => {
+			routes[parseInt(planeId)] = new Route(routeData);
+			return routes;
+		}, {} as {[planeId: number]: Route});
 	}
-
-	// Add other methods to modify the carrier object
 }
+
+// Add other methods to modify the carrier object

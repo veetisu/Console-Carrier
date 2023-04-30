@@ -18,6 +18,7 @@ import {Route} from './../types/Airplane';
 import 'bootstrap/dist/css/bootstrap.css';
 import Carrier from '../types/Carrier';
 import {createAirportObjects} from './App';
+
 import MovingMarker from '../components/TrackingMarker/MovingMarker';
 
 const baseURL = 'http://127.0.0.1:5000';
@@ -42,13 +43,33 @@ interface MapProps {
 	center: [number, number];
 }
 
-function Map(props: MapProps) {
-	const {center} = props;
+function Map({center}: MapProps) {
 	const map = useMap();
 	useEffect(() => {
 		map.flyTo(center, map.getZoom());
 	}, [center, map]);
 	return <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' />;
+}
+
+interface AirportMarkerProps {
+	airport: Airport;
+	selectedPlane: Plane | null;
+	handleAirportMarkerClick: (airport: Airport) => void;
+	handleFly: (airport: Airport) => void;
+}
+
+function AirportMarker({airport, selectedPlane, handleAirportMarkerClick, handleFly}: AirportMarkerProps) {
+	const latitude = airport.latitude_deg;
+	const longitude = airport.longitude_deg;
+	return (
+		<Marker position={[latitude, longitude]} icon={customIcon}>
+			<Popup>
+				{airport.name}
+				<br />
+				{selectedPlane ? <Button onClick={() => handleFly(airport)}>Fly here</Button> : <Button onClick={() => handleAirportMarkerClick(airport)}>More</Button>}
+			</Popup>
+		</Marker>
+	);
 }
 
 function App() {

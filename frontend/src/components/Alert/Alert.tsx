@@ -2,11 +2,11 @@ import React, {useEffect, useState} from 'react';
 import './Alert.css';
 
 interface props {
-	children: any;
+	message: string;
 	onClose: () => void;
 }
 
-const CustomAlert = ({children, onClose}: props) => {
+const CustomAlert = ({message, onClose}: props) => {
 	const [fadeOut, setFadeOut] = useState(false);
 
 	useEffect(() => {
@@ -29,7 +29,7 @@ const CustomAlert = ({children, onClose}: props) => {
 
 	return (
 		<div className={`alert alert-warning alert-dismissible fade show myalert ${fadeOut ? 'fade-out' : ''}`} role="alert">
-			{children}
+			{message}
 			<button type="button" className="close" data-dismiss="alert" aria-label="Close" onClick={onClose}>
 				<span aria-hidden="true">&times;</span>
 			</button>

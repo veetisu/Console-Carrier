@@ -13,6 +13,7 @@ import Carrier from '../../types/Carrier';
 import RouteView from './RouteView/RouteView';
 import {Routes} from 'react-router-dom';
 import {Route} from '../../types/Airplane';
+import PlanesView from './PlanesView/PlanesView';
 
 interface ModalProps {
 	show: boolean;
@@ -70,44 +71,8 @@ const Modal: React.FC<ModalProps> = ({onContinuousChange, onClose, type, planes,
 				<button onClick={onClose} className="close-button btn btn-danger">
 					X
 				</button>
-				{type === 'planes' &&
-					planes.map((plane: Plane) => {
-						return (
-							<div className="plane d-flex flex-row align-items-center border rounded mb-3 p-3">
-								<div className="image-container">
-									<img src={`../img/planes/${plane.type}.png`} alt="" className="img-fluid" style={{maxWidth: '25vw'}} />
-								</div>
-								<div className="stats-container">
-									<h5 className="mb-1">{plane.name}</h5>
-									<div className="d-flex flex-row">
-										<div className="w-50 d-flex flex-column">
-											<div>
-												<span className="text-nowrap me-2">Type:</span>
-												<span>{plane.type_name}</span>
-											</div>
-											<div>
-												<span className="text-nowrap me-2">Range:</span>
-												<span>{plane.range} km</span>
-											</div>
-										</div>
-										<div className="w-50 d-flex flex-column">
-											<div>
-												<span className="text-nowrap me-2">Passenger Capacity:</span>
-												<span>{plane.passenger_capacity}</span>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div className="location-container ms-auto">
-									<div>
-										<strong>Location:</strong>
-									</div>
-									<div>{plane.airport.name}</div>
-									<div>({plane.airport.icao})</div>
-								</div>
-							</div>
-						);
-					})}
+
+				{type === 'planes' && <PlanesView setCarrier={setCarrier} planes={planes} />}
 
 				{type === 'airport' && (
 					<div>
@@ -214,7 +179,7 @@ const Modal: React.FC<ModalProps> = ({onContinuousChange, onClose, type, planes,
 					</div>
 				)}
 				{type === 'fuel' && <FuelView onCarrierUpdated={setCarrier} fuelPrice={2} carrier={carrier} onBuyMoreFuel={() => console.log('F')} />}
-				{type === 'shop' && <ShopView></ShopView>}
+				{type === 'shop' && <ShopView setCarrier={setCarrier}></ShopView>}
 				{type == 'route' && <RouteView></RouteView>}
 			</div>
 		</div>

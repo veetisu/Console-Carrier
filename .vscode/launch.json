@@ -1,18 +1,13 @@
 {
-	// Use IntelliSense to learn about possible attributes.
-	// Hover to view descriptions of existing attributes.
-	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"type": "node",
+			"name": "Python: Current File",
+			"type": "python",
 			"request": "launch",
-			"name": "Mocha Current File",
-			"program": "${workspaceFolder}/frontend/node_modules/mocha/bin/_mocha",
-			"args": ["--no-timeouts", "--colors", "${file}", "--require", "ts-node/register"],
+			"program": "${file}",
 			"console": "integratedTerminal",
-			"sourceMaps": true,
-			"internalConsoleOptions": "neverOpen"
+			"cwd": "X:/Dev/Koulu/Web/backend" // Replace with the correct path to the directory containing the 'save' folder
 		}
 	]
 }

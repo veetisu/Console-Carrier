@@ -1,8 +1,9 @@
 const baseURL = 'http://localhost:5000/';
 import {Plane} from '../components/Modal/Modal';
-import {Size, Continent} from './../types/types';
+import {Size, Continent} from '../types/types';
 import Airport from '../types/Airport';
 import Carrier from '../types/Carrier';
+import CustomAlert from '../components/Alert/Alert';
 
 export async function fetchAirports() {
 	const response = await fetch(baseURL + '/airports');
@@ -134,3 +135,53 @@ export const postSearch = async (searchTerm: string, selectedSizes: Size[], sele
 		console.error('Error posting search:', error);
 	}
 };
+export async function buyPlane(model) {
+	try {
+		const response = await fetch(`${baseURL}/buy_plane/${model}`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+
+		const data = await response.json();
+
+		if (data.success) {
+			console.log(data.message);
+			const carrierData = JSON.parse(data.carrier);
+			const carrier = new Carrier(carrierData);
+			return {success: true, carrier: carrier};
+			// Update the UI to reflect the successful purchase
+		} else {
+			return {succes: false, message: data.message.toString()};
+		}
+	} catch (error) {
+		console.error('Error:', error);
+		return;
+		alert('An error occurred while trying to buy the plane.');
+	}
+}
+export async function sellPlane(planeId: number): Promise<{success: boolean; carrier: Carrier | null}> {
+	try {
+		const response = await fetch(`${baseURL}/sell_plane/${planeId}`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+
+		const data = await response.json();
+
+		if (data.success) {
+			console.log(data.message);
+			const carrierData = JSON.parse(data.carrier);
+			const carrier = new Carrier(carrierData);
+			return {success: true, carrier: carrier};
+		} else {
+			return {success: false, carrier: null};
+		}
+	} catch (error) {
+		console.error('Error:', error);
+		return {success: false, carrier: null};
+	}
+}

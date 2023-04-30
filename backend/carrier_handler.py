@@ -7,7 +7,10 @@ from route_handler import Route
 
 db_handler = Db_handler()
 
+import os
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
+save_path = os.path.join(base_dir, 'save', 'carrier_save.pickle')
 class Carrier():
     # TI = To Implement
     def __init__(self, name, headquarters):
@@ -59,5 +62,5 @@ class Carrier():
         return results
 
     def save(self):
-        with open('./save/carrier_save.pickle', 'wb') as f:
+        with open(save_path, 'wb') as f:
             pickle.dump(self, f)

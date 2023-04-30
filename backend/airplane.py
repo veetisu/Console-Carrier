@@ -29,8 +29,6 @@ class Airplane():
         """
         total_consumption = self.fuel_consumption * route.route_lenght
         if total_consumption > carrier.fuel:
-            carrier.fuel = 0
-            self.crash()
             return False
         else:
             carrier.fuel -= total_consumption

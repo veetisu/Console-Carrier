@@ -1,0 +1,13 @@
+"filename", "language", "Python", "comment", "blank", "total"
+"x:\Dev\Koulu\Web\backend\__init__.py", "Python", 0, 0, 1, 1
+"x:\Dev\Koulu\Web\backend\airplane.py", "Python", 28, 9, 5, 42
+"x:\Dev\Koulu\Web\backend\carrier_handler.py", "Python", 48, 7, 12, 67
+"x:\Dev\Koulu\Web\backend\config.py", "Python", 71, 2, 7, 80
+"x:\Dev\Koulu\Web\backend\db_handler.py", "Python", 109, 15, 30, 154
+"x:\Dev\Koulu\Web\backend\gui_handler.py", "Python", 132, 6, 15, 153
+"x:\Dev\Koulu\Web\backend\main.py", "Python", 51, 30, 13, 94
+"x:\Dev\Koulu\Web\backend\observer.py", "Python", 20, 4, 3, 27
+"x:\Dev\Koulu\Web\backend\route_handler.py", "Python", 112, 14, 19, 145
+"x:\Dev\Koulu\Web\backend\routes.py", "Python", 216, 5, 40, 261
+"x:\Dev\Koulu\Web\backend\tools.py", "Python", 22, 2, 8, 32
+"Total", "-", 809, 94, 153, 1056
