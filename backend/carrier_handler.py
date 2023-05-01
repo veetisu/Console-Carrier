@@ -26,6 +26,7 @@ class Carrier():
         self.fuel = cfg.STARTING_FUEL
         self.money = cfg.STARTING_MONEY
         self.active_routes = {}
+        self.deleted_routes=[]
 
         db_handler.add_carrier(self)
 

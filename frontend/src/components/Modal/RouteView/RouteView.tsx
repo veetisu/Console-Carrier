@@ -5,7 +5,7 @@ import {Route} from '../../../types/Airplane';
 
 interface ActiveRoutesListProps {
 	routes: {[planeId: string]: Route};
-	removeRoute: (planeId: string) => void;
+	removeRoute: (planeId: number) => void;
 }
 
 const ActiveRoutesList: React.FC<ActiveRoutesListProps> = ({routes, removeRoute}) => {
@@ -24,7 +24,7 @@ const ActiveRoutesList: React.FC<ActiveRoutesListProps> = ({routes, removeRoute}
 							<strong>Flight Time:</strong> {route.flight_time} seconds
 						</Col>
 						<Col className="text-right">
-							<Button variant="danger" onClick={() => removeRoute(planeId)}>
+							<Button variant="danger" onClick={() => removeRoute(parseInt(planeId))}>
 								Remove
 							</Button>
 						</Col>

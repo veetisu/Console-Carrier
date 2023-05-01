@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {MapContainer, TileLayer, Marker, Popup, useMap} from 'react-leaflet';
 import L, {latLngBounds, LatLngBoundsLiteral} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import {fetchAirports, fetchAirportCoords, fetchRoute, fetchCarrier, postFly, getLanding} from './api';
+import {fetchAirports, fetchAirportCoords, fetchRoute, fetchCarrier, postFly, getLanding, removeRoute} from './api';
 import Navbar from '../components/NavBar/NavBar';
 import './Map.css';
 import TrackingMarker from '../components/TrackingMarker/TrackingMarker';
@@ -20,6 +20,7 @@ import Carrier from '../types/Carrier';
 import {createAirportObjects} from './App';
 
 import MovingMarker from '../components/TrackingMarker/MovingMarker';
+import {fetchIsCancelled} from './api';
 
 const baseURL = 'http://127.0.0.1:5000';
 const ENV = 'dev';
@@ -74,14 +75,12 @@ function AirportMarker({airport, selectedPlane, handleAirportMarkerClick, handle
 
 function App() {
 	const [airports, setAirports] = useState<Airport[]>([]);
-
 	const [position, setPosition] = useState<[number, number] | undefined>(undefined);
 	const [center, setCenter] = useState<[number, number]>([50.1109, 10.258]);
 	const maxBounds: LatLngBoundsLiteral = [
 		[-90, -180],
 		[90, 180]
 	];
-
 	const [routes, setRoutes] = useState<{[planeId: number]: Route}>({});
 	const [showModal, setShowModal] = useState(false);
 	const [modalContent, setModalContent] = useState<string | false>(false);
@@ -94,6 +93,7 @@ function App() {
 	const [alerts, setAlerts] = useState<string[]>([]);
 	const [isFlyDisabled, setIsFlyDisabled] = useState(false);
 	const [isContinuous, setIsContinuous] = useState(false);
+	const [toBeRemoved, setToBeRemoved] = useState<number[]>([]);
 
 	const handleRemoveAlert = (index: number) => {
 		setAlerts((prevAlerts) => prevAlerts.filter((_, i) => i !== index));
@@ -117,7 +117,13 @@ function App() {
 		setShowModal(true);
 		setModalContent(type);
 	};
-	const handleRouteRemoval = (planeId: number) => {};
+	const handleRouteRemoval = (planeId: number) => {
+		removeRoute(planeId).then((carrierData) => {
+			const newCarrier = new Carrier(carrierData);
+			setCarrier(newCarrier);
+			setRoutes(carrier?.active_routes);
+		});
+	};
 
 	const handleCloseModal = () => {
 		setShowModal(false);
@@ -152,12 +158,21 @@ function App() {
 					} else {
 						throw new Error('Invalid route object');
 					}
+					let err = false;
 					setTimeout(() => {
-						getLanding(plane_id).then((carrier) => {
-							setCarrier(carrier);
+						getLanding(plane_id).then((data) => {
+							if (data == 'error') {
+								err = true;
+								return;
+							}
+							setCarrier(new Carrier(data));
 						});
-						if (route.continous) {
-							flyBack(route, destination, origin);
+						if (route.continous && !toBeRemoved.includes(parseInt(route.plane.id)) && carrier.active_routes[parseInt(route.plane.id)] != undefined && !err) {
+							fetchIsCancelled(plane_id).then((data) => {
+								if (data == 'False') {
+									flyBack(route, destination, origin);
+								}
+							});
 						}
 					}, route.flight_time * 1000);
 				})
@@ -273,7 +288,7 @@ function App() {
 						return <MovingMarker key={planeId} markerId={planeId} departure={positions[0]} duration={duration} arrival={positions[1]} />;
 					})}
 			</MapContainer>
-			{showModal && <Modal handleRouteRemoval={handleRouteRemoval} removeRoute={flagRouteRemoval} routes={routes} show={showModal} carrier={carrier} setCarrier={setCarrier} onClose={handleCloseModal} planes={carrier?.airplanes ?? []} type={modalContent || ''} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectedFlyPlane={setSelectedFlyPlane} searchResults={searchResults} handleSearch={handleSearch} destinationAirport={destinationAirport} setDestinationAirport={setDestinationAirport} handleFly={handleFly} isFlyDisabled={isFlyDisabled} onContinuousChange={(value: boolean) => setIsContinuous(value)}></Modal>}
+			{showModal && <Modal handleRouteRemoval={handleRouteRemoval} routes={routes} show={showModal} carrier={carrier} setCarrier={setCarrier} onClose={handleCloseModal} planes={carrier?.airplanes ?? []} type={modalContent || ''} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectedFlyPlane={setSelectedFlyPlane} searchResults={searchResults} handleSearch={handleSearch} destinationAirport={destinationAirport} setDestinationAirport={setDestinationAirport} handleFly={handleFly} isFlyDisabled={isFlyDisabled} onContinuousChange={(value: boolean) => setIsContinuous(value)}></Modal>}
 			<div className="alerts-container">
 				{alerts.map((alertContent, index) => (
 					<CustomAlert message={alertContent} key={index} onClose={() => handleRemoveAlert(index)}></CustomAlert>

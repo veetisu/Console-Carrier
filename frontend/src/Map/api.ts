@@ -97,11 +97,12 @@ export const postFly = async (plane_id: number, departure: string, arrival: stri
 		throw error;
 	}
 };
-export const getLanding = async (plane_id: number): Promise<Carrier> => {
+export const getLanding = async (plane_id: number): Promise<Carrier | string> => {
 	try {
 		const response = await fetch(`${baseURL}/land/${plane_id}`);
 
 		if (!response.ok) {
+			return 'error';
 			throw new Error(`Error landing plane: ${response.status} ${response.statusText}`);
 		}
 
@@ -187,7 +188,7 @@ export async function sellPlane(planeId: number): Promise<{success: boolean; car
 }
 export const removeRoute = async (planeId: number): Promise<Carrier | null> => {
 	try {
-		const response = await fetch(`${baseURL}/remove_route/${planeId}`, {
+		const response = await fetch(`${baseURL}/delete_route/${planeId}`, {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json'
@@ -206,3 +207,9 @@ export const removeRoute = async (planeId: number): Promise<Carrier | null> => {
 		return null;
 	}
 };
+
+export async function fetchIsCancelled(plane_id: number): Promise<string> {
+	const response = await fetch(baseURL + '/is_cancelled/' + plane_id);
+	const data = await response.json();
+	return data;
+}

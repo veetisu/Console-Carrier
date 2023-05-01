@@ -170,6 +170,8 @@ class Router:
             print(plane)
             route = Route(departure, arrival, plane, continous)
             carrier.active_routes[plane_id] = route
+            if plane_id in carrier.deleted_routes:
+                carrier.deleted_routes.remove(plane_id)
             print("Active routes:", carrier.active_routes)
             if route is not None:
                 if route.fuel_required:
@@ -183,12 +185,14 @@ class Router:
         def land_plane(plane_id):
             try:
                 # Retrieve the route object and the carrier object from your data store
-                route = carrier.active_routes.get(plane_id)
-                if not route:
+                if plane_id not in carrier.active_routes:
+                    if plane_id in carrier.deleted_routes:
+                        return jsonify(""), 200
                     print(f"Route not found for plane_id: {plane_id}")
                     return jsonify({"error": f"Route not found for plane_id: {plane_id}"}), 400
 
                 print(f"Landing plane with id: {plane_id}")
+                route = carrier.active_routes[plane_id]
                 result = route.fly(carrier)
 
                 if not result:
@@ -196,6 +200,7 @@ class Router:
                     return jsonify({"error": "Failed to land the plane"}), 400
 
                 print(f"Successfully landed plane with id: {plane_id}")
+                print(carrier.active_routes)
                 return return_carrier()
             except Exception as e:
                 print(f"Error in land_plane for plane_id: {plane_id}")
@@ -242,8 +247,18 @@ class Router:
                 response = {"success": False, "message": "Plane not found."}
                 response["status_code"] = 404
                 return response
-            
-
+        @self.router.route('/delete_route/<int:plane_id>', methods=['DELETE'])
+        def del_route(plane_id):
+            carrier.active_routes.__delitem__(plane_id)
+            carrier.deleted_routes.append(int(plane_id))
+            print(carrier.active_routes)
+            return return_carrier()
+        @self.router.route('/is_cancelled/<int:plane_id>')
+        def iscancelled(plane_id):
+            if plane_id in carrier.deleted_routes:
+                return jsonify("True")
+            else:
+                return jsonify("False")        
 
     def run(self):
         self.router.run(debug=True)

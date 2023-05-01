@@ -72,8 +72,6 @@ class Route():
         This method will handle all the different tasks associated with the flying (Fuel consumption, money, etc.)"""
         # Needs more work, prob needs to return something
         plane = self.plane
-        self.elapsed_time = datetime.now() - self.take_off_time
-        self.elapsed_time = self.elapsed_time.total_seconds()
         enough_fuel = plane.consume_fuel(self, carrier)
         if not enough_fuel:
             return False
