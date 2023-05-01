@@ -14,6 +14,8 @@ import RouteView from './RouteView/RouteView';
 import {Routes} from 'react-router-dom';
 import {Route} from '../../types/Airplane';
 import PlanesView from './PlanesView/PlanesView';
+import ActiveRoutesList from './RouteView/RouteView';
+import RoutesContainer from './RouteView/RoutesContainer';
 
 interface ModalProps {
 	show: boolean;
@@ -34,7 +36,8 @@ interface ModalProps {
 	isFlyDisabled: boolean;
 	onContinuousChange: (value: boolean) => void;
 	routes: {[planeId: number]: Route};
-	removeRO;
+	removeRoute: (planeId: number) => void;
+	handleRouteRemoval: (planeId: number) => void;
 }
 
 export interface Plane {
@@ -64,7 +67,7 @@ export interface Plane {
 }
 
 function handleClick(plane: Plane) {}
-const Modal: React.FC<ModalProps> = ({onContinuousChange, onClose, type, planes, airport, onPlaneSelect, selectedFlyPlane, setSelectedFlyPlane, searchResults, handleSearch, destinationAirport, setDestinationAirport, handleFly, carrier, setCarrier, isFlyDisabled}) => {
+const Modal: React.FC<ModalProps> = ({handleRouteRemoval, removeRoute, onContinuousChange, onClose, type, planes, airport, onPlaneSelect, selectedFlyPlane, setSelectedFlyPlane, searchResults, handleSearch, destinationAirport, setDestinationAirport, handleFly, carrier, setCarrier, isFlyDisabled, routes}) => {
 	return (
 		<div className="modal mx-0">
 			<div className="modal-content">
@@ -180,7 +183,7 @@ const Modal: React.FC<ModalProps> = ({onContinuousChange, onClose, type, planes,
 				)}
 				{type === 'fuel' && <FuelView onCarrierUpdated={setCarrier} fuelPrice={2} carrier={carrier} onBuyMoreFuel={() => console.log('F')} />}
 				{type === 'shop' && <ShopView setCarrier={setCarrier}></ShopView>}
-				{type == 'route' && <RouteView></RouteView>}
+				{type == 'routes' && <RouteView routes={routes} removeRoute={handleRouteRemoval} />}
 			</div>
 		</div>
 	);

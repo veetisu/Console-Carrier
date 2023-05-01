@@ -117,6 +117,7 @@ function App() {
 		setShowModal(true);
 		setModalContent(type);
 	};
+	const handleRouteRemoval = (planeId: number) => {};
 
 	const handleCloseModal = () => {
 		setShowModal(false);
@@ -132,6 +133,7 @@ function App() {
 		setShowModal(false);
 		setModalContent('flight_selection');
 	};
+
 	const handleFly = () => {
 		const flyBack = (route: Route, origin: string, destination: string) => {
 			route.iteration += 1;
@@ -139,7 +141,7 @@ function App() {
 				.then((carrier: Carrier) => {
 					const plane_id = parseInt(route.plane.id);
 					if (carrier != null) {
-						console.log('Fly response for plane', route.plane.id, ':', carrier); // Added log
+						console.log('Fly response for plane', route.plane.id, ':', carrier);
 
 						if (routes) {
 							setRoutes((prevRoutes) => ({
@@ -168,7 +170,7 @@ function App() {
 		if (destinationAirport && selectedFlyPlane) {
 			postFly(parseInt(selectedFlyPlane.id), selectedFlyPlane.airport.icao, destinationAirport.ident, isContinuous)
 				.then((carrier: Carrier) => {
-					const route = carrier.active_routes[selectedFlyPlane.id];
+					const route = carrier.active_routes[parseInt(selectedFlyPlane.id)];
 					if (route != null) {
 						console.log('Fly response for plane', selectedFlyPlane.id, ':', route); // Added log
 						setCarrier(carrier);
@@ -271,12 +273,10 @@ function App() {
 						return <MovingMarker key={planeId} markerId={planeId} departure={positions[0]} duration={duration} arrival={positions[1]} />;
 					})}
 			</MapContainer>
-			{showModal && <Modal show={showModal} carrier={carrier} setCarrier={setCarrier} onClose={handleCloseModal} planes={carrier?.airplanes ?? []} type={modalContent || ''} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectedFlyPlane={setSelectedFlyPlane} searchResults={searchResults} handleSearch={handleSearch} destinationAirport={destinationAirport} setDestinationAirport={setDestinationAirport} handleFly={handleFly} isFlyDisabled={isFlyDisabled} onContinuousChange={(value: boolean) => setIsContinuous(value)}></Modal>}
+			{showModal && <Modal handleRouteRemoval={handleRouteRemoval} removeRoute={flagRouteRemoval} routes={routes} show={showModal} carrier={carrier} setCarrier={setCarrier} onClose={handleCloseModal} planes={carrier?.airplanes ?? []} type={modalContent || ''} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectedFlyPlane={setSelectedFlyPlane} searchResults={searchResults} handleSearch={handleSearch} destinationAirport={destinationAirport} setDestinationAirport={setDestinationAirport} handleFly={handleFly} isFlyDisabled={isFlyDisabled} onContinuousChange={(value: boolean) => setIsContinuous(value)}></Modal>}
 			<div className="alerts-container">
 				{alerts.map((alertContent, index) => (
-					<CustomAlert key={index} onClose={() => handleRemoveAlert(index)}>
-						{alertContent}
-					</CustomAlert>
+					<CustomAlert message={alertContent} key={index} onClose={() => handleRemoveAlert(index)}></CustomAlert>
 				))}
 			</div>
 			<button className="floating-fly-button" onClick={handleFlyButtonClick}>

@@ -185,3 +185,24 @@ export async function sellPlane(planeId: number): Promise<{success: boolean; car
 		return {success: false, carrier: null};
 	}
 }
+export const removeRoute = async (planeId: number): Promise<Carrier | null> => {
+	try {
+		const response = await fetch(`${baseURL}/remove_route/${planeId}`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+
+		if (response.ok) {
+			const data = await response.json();
+			return data;
+		} else {
+			console.error('Error removing route:', response.statusText);
+			return null;
+		}
+	} catch (error) {
+		console.error('Error removing route:', error);
+		return null;
+	}
+};

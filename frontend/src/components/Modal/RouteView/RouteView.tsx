@@ -1,7 +1,14 @@
+// ActiveRoutesList.tsx
 import React from 'react';
 import {ListGroup, Button, Row, Col} from 'react-bootstrap';
+import {Route} from '../../../types/Airplane';
 
-const ActiveRoutesList = ({routes, removeRoute}) => {
+interface ActiveRoutesListProps {
+	routes: {[planeId: string]: Route};
+	removeRoute: (planeId: string) => void;
+}
+
+const ActiveRoutesList: React.FC<ActiveRoutesListProps> = ({routes, removeRoute}) => {
 	return (
 		<ListGroup className="active-routes-list">
 			{Object.entries(routes).map(([planeId, route]) => (

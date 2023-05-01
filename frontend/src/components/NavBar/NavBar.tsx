@@ -58,7 +58,7 @@ function Navbar({onClick, carrier, handleMoreFuelClick}: NavbarProps) {
 const navItems = [
 	{text: 'Planes', logo: '../../img/black-plane.png'},
 	{text: 'Shop', logo: '../../img/shop.png'},
-	{text: 'Item 3', logo: '../../img/black-plane.png'}
+	{text: 'Routes', logo: '../../img/black-plane.png'}
 	// Add more items as needed
 ];
 
