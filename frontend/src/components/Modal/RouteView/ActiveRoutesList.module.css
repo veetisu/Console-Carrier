@@ -1,0 +1,30 @@
+.active-routes-list {
+	background-color: #f8f9fa;
+}
+
+.route-item {
+	background-color: #212529;
+	color: white;
+	border-radius: 5px;
+	margin-bottom: 10px;
+	padding: 10px;
+	cursor: pointer;
+}
+
+.route-item:hover {
+	background-color: #343a40;
+}
+
+.route-item h4 {
+	color: #ffc107;
+	margin-bottom: 5px;
+}
+
+.route-item p {
+	margin-bottom: 0;
+}
+
+.remove-button-container {
+	position: absolute;
+	right: 20%;
+}

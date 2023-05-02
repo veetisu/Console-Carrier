@@ -268,11 +268,14 @@ save_path = os.path.join(base_dir, 'save', 'carrier_save.pickle')
 def load_carrier():
     """Loads carrier from file using pickles. Returns carrier object if found and False otherwise. """
     try:
-        with open(save_path, 'rb') as f:
-            carrier = pickle.load(f)
-        return carrier
+        if os.path.getsize(save_path) > 0:
+            with open(save_path, 'rb') as f:
+                carrier = pickle.load(f)
+            return carrier
     except Exception:
-        return False
+        pass
+    
+    return False
 
 
 if __name__ == '__main__':

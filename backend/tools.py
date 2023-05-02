@@ -1,4 +1,13 @@
+# utils.py
 import time, threading
+from config import TIME_SCALE_FACTOR
+import datetime
+
+def get_in_game_month(start_time):
+    elapsed_real_time = datetime.datetime.now() - start_time
+    elapsed_in_game_time = elapsed_real_time.total_seconds() * TIME_SCALE_FACTOR
+    in_game_month = int((elapsed_in_game_time // (30 * 24 * 60 * 60)) % 12) + 1
+    return in_game_month
 
 StartTime=time.time()
 

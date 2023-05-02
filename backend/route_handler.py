@@ -7,6 +7,8 @@ import os
 from airplane import Airplane
 from datetime import datetime
 from threading import Timer
+from tools import get_in_game_month
+import time
 
 
 class Airport():
@@ -41,7 +43,8 @@ class Route():
 
     # DO: Instances of this need to identifiable somehow
     def __init__(self, departure_airport: Airport, arrival_airport: Airport, plane: Airplane, continous: bool, iteration=0):
-
+        self.demand_factor = random.uniform(0.8, 1.2)  # Random value between 0.8 and 1.2
+        self.competition_factor = random.uniform(0.9, 1.1)  # Random value between 0.9 and 1.1
         self.plane = plane
         self.departure_airport = departure_airport
         self.arrival_airport = arrival_airport
@@ -61,6 +64,14 @@ class Route():
         self.flight_time = (self.route_lenght /
                             plane.cruise_speed)*cfg.flight_time_multiplier
         self.status = "ready"
+        
+        self.start_periodic_update()
+    def start_periodic_update(self):
+        # Calculate the real-time duration of an in-game month
+        real_time_month_duration = (30 * 24 * 60 * 60) / cfg.TIME_SCALE_FACTOR
+
+        # Schedule the update_demand_factor method to be called periodically
+        Timer(real_time_month_duration, self.update_demand_factor).start()
 
     def take_off(self):
         self.status = "flying"
@@ -99,9 +110,39 @@ class Route():
 
     def total_money(self) -> int:
         """Returns the amount of money that the route generates when flown."""
-        money_per_passenger = cfg.money_per_passenger_per_km * self.route_lenght
-        total_money = money_per_passenger * self.passengers()
+        total_money = self.calculate_ticket_price() * self.passengers()
         return total_money
+    
+    
+    def calculate_ticket_price(self):
+        base_price = cfg.money_per_passenger_per_km*self.route_lenght
+        distance_factor = self.route_lenght / 1000
+        price = base_price * (1 + distance_factor) * self.demand_factor * self.competition_factor
+        return price
+    def update_factors(self, new_demand_factor=None, new_competition_factor=None):
+        if new_demand_factor:
+            self.demand_factor = new_demand_factor
+        if new_competition_factor:
+            self.competition_factor = new_competition_factor
+    def update_demand_factor(self):
+        current_month = get_in_game_month(cfg.GAME_START_TIME)
+        if current_month in [6, 7, 8]:  # High season
+            self.demand_factor = random.uniform(1.1, 1.3)
+        elif current_month in [12, 1, 2]:  # Low season
+            self.demand_factor = random.uniform(0.7, 0.9)
+        else:  # Normal season
+            self.demand_factor = random.uniform(0.9, 1.1)
+        print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] Updated demand factor for route from {self.departure_airport.name} to {self.arrival_airport.name}: {self.demand_factor}")
+
+
+    def update_competition_factor(self, competitors: int):
+        if competitors == 0:
+            self.competition_factor = random.uniform(1.1, 1.3)
+        elif competitors == 1:
+            self.competition_factor = random.uniform(0.9, 1.1)
+        else:
+            self.competition_factor = random.uniform(0.7, 0.9)
+
 
     def generate_vip(self):
         """This method determines on random wether there will be a VIP available on this route. Called on route init. 

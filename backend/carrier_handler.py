@@ -4,6 +4,8 @@ from airplane import Airplane
 import config as cfg
 import pickle
 from route_handler import Route
+import datetime
+
 
 db_handler = Db_handler()
 
@@ -21,7 +23,8 @@ class Carrier():
         # Shouldn't be hardcoded!
         self.headquarters = "EFHK"
         self.id = 1
-
+        self.game_start_time = datetime.datetime.now()
+        cfg.set_game_start_time(self.game_start_time)
         self.resources = ["fuel", "money"]
         self.fuel = cfg.STARTING_FUEL
         self.money = cfg.STARTING_MONEY

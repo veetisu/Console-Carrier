@@ -1,9 +1,16 @@
+import datetime
 MAX_AIRPORTS_PER_SEARCH = 5
 STARTING_FUEL = 10000
 STARTING_MONEY = 100
 
 FUEL_PRICE_PER_LITER = 3
+TIME_SCALE_FACTOR = 8760  # 1 year in 1 hour
 
+
+GAME_START_TIME = datetime.datetime(2023, 5, 2, 12, 0, 0)  # Year, Month, Day, Hour, Minute, Second
+def set_game_start_time(start_time):
+    global GAME_START_TIME
+    GAME_START_TIME = start_time
 # Parameters for calculating amount of passengers on a given airport
 # Formula is: randint(airport_min_passenger, airport_max_passengers) * airport_passenger_multiplier for the type
 airport_min_passenger = 1

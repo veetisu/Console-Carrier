@@ -103,7 +103,7 @@ export class Route {
 	arrival_airport: Airport;
 	departure_coords: [number, number];
 	arrival_coords: [number, number];
-	route_length: number;
+	route_lenght: number;
 	flown: boolean;
 	vip: Vip | null;
 	has_vip: boolean;
@@ -120,7 +120,7 @@ export class Route {
 		this.arrival_airport = new Airport(data.arrival_airport);
 		this.departure_coords = data.departure_coords;
 		this.arrival_coords = data.arrival_coords;
-		this.route_length = data.route_length;
+		this.route_lenght = data.route_lenght;
 		this.flown = data.flown;
 		this.vip = data.vip ? new Vip(this) : null; // Pass the Route object (this) to the Vip constructor
 		this.has_vip = data.has_vip;

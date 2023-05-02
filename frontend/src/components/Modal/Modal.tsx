@@ -10,11 +10,11 @@ import {postSearch} from '../../Map/api';
 import FuelView from './FuelView/FuelView';
 import ShopView from './ShopView/ShopView';
 import Carrier from '../../types/Carrier';
-import RouteView from './RouteView/RouteView';
+import RouteView from './RouteView/ActiveRoutesList';
 import {Routes} from 'react-router-dom';
 import {Route} from '../../types/Airplane';
 import PlanesView from './PlanesView/PlanesView';
-import ActiveRoutesList from './RouteView/RouteView';
+import ActiveRoutesList from './RouteView/ActiveRoutesList';
 import RoutesContainer from './RouteView/RoutesContainer';
 
 interface ModalProps {
