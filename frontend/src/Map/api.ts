@@ -207,7 +207,29 @@ export const removeRoute = async (planeId: number): Promise<Carrier | null> => {
 		return null;
 	}
 };
+export const createRoute = async (departure: string, arrival: string, ticket_price: number, plane_id: number, continous: boolean) => {
+	try {
+		const response = await fetch(`${baseURL}/create_route`, {
+			method: 'POST',
+			body: JSON.stringify({
+				departure,
+				arrival,
+				ticket_price,
+				plane_id,
+				continous
+			})
+		});
 
+		if (response.status !== 200) {
+			throw new Error(`Error creating route: ${response.status} ${response.statusText}`);
+		}
+
+		return response.data;
+	} catch (error) {
+		console.error('Error in createRoute:', error.message);
+		throw error;
+	}
+};
 export async function fetchIsCancelled(plane_id: number): Promise<string> {
 	const response = await fetch(baseURL + '/is_cancelled/' + plane_id);
 	const data = await response.json();

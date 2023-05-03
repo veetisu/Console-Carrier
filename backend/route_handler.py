@@ -42,7 +42,7 @@ class Route():
     """"This class represents a route between two different airports"""
 
     # DO: Instances of this need to identifiable somehow
-    def __init__(self, departure_airport: Airport, arrival_airport: Airport, plane: Airplane, continous: bool, iteration=0):
+    def __init__(self, departure_airport: Airport, arrival_airport: Airport, plane: Airplane, set_ticket_price: float, continous = False, iteration=0):
         self.demand_factor = random.uniform(0.8, 1.2)  # Random value between 0.8 and 1.2
         self.competition_factor = random.uniform(0.9, 1.1)  # Random value between 0.9 and 1.1
         self.plane = plane
@@ -64,6 +64,7 @@ class Route():
         self.flight_time = (self.route_lenght /
                             plane.cruise_speed)*cfg.flight_time_multiplier
         self.status = "ready"
+        self.ticket_price = set_ticket_price
         
         self.start_periodic_update()
     def start_periodic_update(self):
@@ -102,6 +103,14 @@ class Route():
         result = 0
         max_passengers = self.plane.passenger_capacity
         potential_passengers = self.departure_airport.airport_passengers()
+
+        # Calculate price sensitivity factor
+        base_ticket_price = self.calculate_base_ticket_price()
+        price_sensitivity_factor = base_ticket_price / (self.calculate_ticket_price() * cfg.price_sensitivity_divisor)
+
+        # Adjust the number of passengers based on the price sensitivity factor
+        potential_passengers = int(potential_passengers * price_sensitivity_factor)
+
         if potential_passengers <= max_passengers:
             result = potential_passengers
         if potential_passengers > max_passengers:
@@ -110,15 +119,22 @@ class Route():
 
     def total_money(self) -> int:
         """Returns the amount of money that the route generates when flown."""
-        total_money = self.calculate_ticket_price() * self.passengers()
+        total_money = self.ticket_price() * self.passengers()
         return total_money
     
+    def calculate_base_ticket_price(self):
+        base_price = cfg.money_per_passenger_per_km * self.route_lenght
+        distance_factor = self.route_lenght / 1000
+        price = base_price * (cfg.base_ticket_price_multiplier + distance_factor)
+        return price
+
     
     def calculate_ticket_price(self):
         base_price = cfg.money_per_passenger_per_km*self.route_lenght
         distance_factor = self.route_lenght / 1000
         price = base_price * (1 + distance_factor) * self.demand_factor * self.competition_factor
         return price
+    
     def update_factors(self, new_demand_factor=None, new_competition_factor=None):
         if new_demand_factor:
             self.demand_factor = new_demand_factor

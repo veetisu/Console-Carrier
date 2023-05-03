@@ -22,6 +22,9 @@ airport_passenger_multiplier = {
     "closed" : 0
 }
 money_per_passenger_per_km = 1
+base_ticket_price_multiplier = 1
+price_sensitivity_divisor = 1
+
 flight_time_multiplier = 3
 
 vip_chance = 0

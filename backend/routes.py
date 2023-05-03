@@ -161,6 +161,7 @@ class Router:
             departure = data['departure']
             arrival = data['arrival']
             continous = data['continous']
+            ticket_price = data['ticket_price']
             print(departure, arrival)
             departure = db_handler.add_airport(departure)
             arrival = db_handler.add_airport(arrival)
@@ -168,7 +169,7 @@ class Router:
             plane = next(
                 (plane for plane in carrier.airplanes if plane.id == plane_id), None)
             print(plane)
-            route = Route(departure, arrival, plane, continous)
+            route = Route(departure, arrival, plane, ticket_price, continous)
             carrier.active_routes[plane_id] = route
             if plane_id in carrier.deleted_routes:
                 carrier.deleted_routes.remove(plane_id)
@@ -259,6 +260,20 @@ class Router:
                 return jsonify("True")
             else:
                 return jsonify("False")        
+        @self.router.route('/create_route', methods=['POST'])
+        def create_route(): 
+            try:
+                data = request.json
+                departure = data['departure']
+                arrival = data['arrival']
+                ticket_price = data['ticket_price']
+                plane_id = data['plane_id']
+                route = Route(departure, arrival,  plane_id)
+
+                return jsonify({"success": True, "message": "Route created successfully."})
+            except Exception as e:
+                print(f"Error in create_route: {str(e)}")
+                return jsonify({"error": str(e)}), 500
 
     def run(self):
         self.router.run(debug=True)
