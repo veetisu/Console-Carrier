@@ -94,6 +94,7 @@ function App() {
 	const [isFlyDisabled, setIsFlyDisabled] = useState(false);
 	const [isContinuous, setIsContinuous] = useState(false);
 	const [toBeRemoved, setToBeRemoved] = useState<number[]>([]);
+	const [ticketPrice, setTicketPrice] = React.useState(0);
 
 	const handleRemoveAlert = (index: number) => {
 		setAlerts((prevAlerts) => prevAlerts.filter((_, i) => i !== index));
@@ -139,11 +140,19 @@ function App() {
 		setShowModal(false);
 		setModalContent('flight_selection');
 	};
+	const handleFlyError = (error) => {
+		console.error('Error in handleFly:', error);
+		if (error.message === 'Not enough fuel') {
+			setAlerts((prevAlerts) => [...prevAlerts, error.message]);
+		} else {
+			setAlerts((prevAlerts) => [...prevAlerts, 'Error flying plane']);
+		}
+	};
 
 	const handleFly = () => {
 		const flyBack = (route: Route, origin: string, destination: string) => {
 			route.iteration += 1;
-			postFly(parseInt(route.plane.id), origin, destination, isContinuous)
+			postFly(parseInt(route.plane.id), origin, destination, isContinuous, ticketPrice)
 				.then((carrier: Carrier) => {
 					const plane_id = parseInt(route.plane.id);
 					if (carrier != null) {
@@ -176,14 +185,11 @@ function App() {
 						}
 					}, route.flight_time * 1000);
 				})
-				.catch((error) => {
-					console.error('Error in flyBack:', error);
-					setAlerts((prevAlerts) => [...prevAlerts, 'Error flying plane back']);
-				});
+				.catch(handleFlyError);
 		};
 
 		if (destinationAirport && selectedFlyPlane) {
-			postFly(parseInt(selectedFlyPlane.id), selectedFlyPlane.airport.icao, destinationAirport.ident, isContinuous)
+			postFly(parseInt(selectedFlyPlane.id), selectedFlyPlane.airport.icao, destinationAirport.ident, isContinuous, ticketPrice)
 				.then((carrier: Carrier) => {
 					const route = carrier.active_routes[parseInt(selectedFlyPlane.id)];
 					if (route != null) {
@@ -215,10 +221,7 @@ function App() {
 						}
 					}, route.flight_time * 1000);
 				})
-				.catch((error) => {
-					console.error('Error in handleFly:', error);
-					setAlerts((prevAlerts) => [...prevAlerts, 'Error flying plane']);
-				});
+				.catch(handleFlyError);
 			setSelectedFlyPlane(false);
 			setDestinationAirport(false);
 			setModalContent(false);
@@ -288,7 +291,7 @@ function App() {
 						return <MovingMarker key={planeId} markerId={planeId} departure={positions[0]} duration={duration} arrival={positions[1]} />;
 					})}
 			</MapContainer>
-			{showModal && <Modal handleRouteRemoval={handleRouteRemoval} routes={routes} show={showModal} carrier={carrier} setCarrier={setCarrier} onClose={handleCloseModal} planes={carrier?.airplanes ?? []} type={modalContent || ''} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectedFlyPlane={setSelectedFlyPlane} searchResults={searchResults} handleSearch={handleSearch} destinationAirport={destinationAirport} setDestinationAirport={setDestinationAirport} handleFly={handleFly} isFlyDisabled={isFlyDisabled} onContinuousChange={(value: boolean) => setIsContinuous(value)}></Modal>}
+			{showModal && <Modal ticketPrice={ticketPrice} setTicketPrice={setTicketPrice} handleRouteRemoval={handleRouteRemoval} routes={routes} show={showModal} carrier={carrier} setCarrier={setCarrier} onClose={handleCloseModal} planes={carrier?.airplanes ?? []} type={modalContent || ''} airport={modalAirport} onPlaneSelect={handlePlaneSelect} selectedFlyPlane={selectedFlyPlane} setSelectedFlyPlane={setSelectedFlyPlane} searchResults={searchResults} handleSearch={handleSearch} destinationAirport={destinationAirport} setDestinationAirport={setDestinationAirport} handleFly={handleFly} isFlyDisabled={isFlyDisabled} onContinuousChange={(value: boolean) => setIsContinuous(value)}></Modal>}
 			<div className="alerts-container">
 				{alerts.map((alertContent, index) => (
 					<CustomAlert message={alertContent} key={index} onClose={() => handleRemoveAlert(index)}></CustomAlert>

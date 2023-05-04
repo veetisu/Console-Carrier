@@ -113,6 +113,7 @@ export class Route {
 	status: string;
 	continous: boolean;
 	iteration: number;
+	season: string;
 
 	constructor(data: any) {
 		this.plane = new Airplane(data.plane);
@@ -130,6 +131,7 @@ export class Route {
 		this.status = data.status;
 		this.continous = data.continous;
 		this.iteration = data.iteration;
+		this.season = data.season;
 	}
 }
 interface VipData {

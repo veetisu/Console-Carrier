@@ -19,6 +19,11 @@ from threading import Thread
 from datetime import datetime
 import traceback
 import os
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
 sys.path.append('backend')
 
 
@@ -68,7 +73,8 @@ class Router:
         # ... Other routes
         CORS(self.router, resources={r"*": {"origins": "*"}})
 
-        def return_carrier():
+        def return_carrier(*args):
+            print("return_carrier received these arguments:", args)
             active_routes_dict = {}
             for plane_id, route in carrier.active_routes.items():
                 active_routes_dict[plane_id] = route.__dict__
@@ -118,7 +124,7 @@ class Router:
             arrival_airport = db_handler.add_airport("EFHK")
             plane = carrier.airplanes[0]
 
-            route = Route(departure_airport, arrival_airport, plane)
+            route = Route(departure_airport, arrival_airport, plane, 0)
             route_data = {
                 'departure_coords': route.departure_coords,
                 'arrival_coords': route.arrival_coords,
@@ -156,31 +162,43 @@ class Router:
             return response
 
         @self.router.route('/fly/<plane_id>', methods=['POST'])
-        def fly (plane_id):
-            data = request.json
-            departure = data['departure']
-            arrival = data['arrival']
-            continous = data['continous']
-            ticket_price = data['ticket_price']
-            print(departure, arrival)
-            departure = db_handler.add_airport(departure)
-            arrival = db_handler.add_airport(arrival)
-            plane_id = int(plane_id)
-            plane = next(
-                (plane for plane in carrier.airplanes if plane.id == plane_id), None)
-            print(plane)
-            route = Route(departure, arrival, plane, ticket_price, continous)
-            carrier.active_routes[plane_id] = route
-            if plane_id in carrier.deleted_routes:
-                carrier.deleted_routes.remove(plane_id)
-            print("Active routes:", carrier.active_routes)
-            if route is not None:
-                if route.fuel_required:
-                    pass
-                route.take_off()
-                return return_carrier()
-            else:
-                return json.dumps({"error": f"Error in route generation"}, cls=CustomJSONEncoder)
+        def fly(plane_id):
+            try:
+                data = request.json
+                departure = data['departure']
+                arrival = data['arrival']
+                continous = data['continous']
+                ticket_price = data['ticket_price']
+                logging.debug(f"Departure: {departure}, Arrival: {arrival}")
+
+                departure = db_handler.add_airport(departure)
+                arrival = db_handler.add_airport(arrival)
+                plane_id = int(plane_id)
+
+                plane = next((plane for plane in carrier.airplanes if plane.id == plane_id), None)
+                logging.debug(f"Plane: {plane}")
+
+                route = Route(departure, arrival, plane, ticket_price, continous)
+
+                if plane_id in carrier.deleted_routes:
+                    carrier.deleted_routes.remove(plane_id)
+
+                logging.debug(f"Active routes: {carrier.active_routes}")
+
+                if route is not None:
+                    if carrier.fuel <= route.fuel_required:
+                        return json.dumps({"error": "Not enough fuel"}, cls=CustomJSONEncoder)
+
+                    carrier.active_routes[plane_id] = route
+                    route.take_off()
+                    return return_carrier()
+                else:
+                    logging.error("Error in route generation")
+                    return json.dumps({"error": "Error in route generation"}, cls=CustomJSONEncoder)
+
+            except Exception as e:
+                logging.error(f"Error in fly function: {e}")
+                return json.dumps({"error": f"Error in fly function: {e}"}, cls=CustomJSONEncoder)
 
         @self.router.route('/land/<int:plane_id>', methods=['GET'])
         def land_plane(plane_id):
@@ -260,21 +278,46 @@ class Router:
                 return jsonify("True")
             else:
                 return jsonify("False")        
-        @self.router.route('/create_route', methods=['POST'])
-        def create_route(): 
+
+        @self.router.route('/fetch_route_data', methods=['POST'])
+        def fetch_route_data():
             try:
                 data = request.json
                 departure = data['departure']
                 arrival = data['arrival']
                 ticket_price = data['ticket_price']
                 plane_id = data['plane_id']
-                route = Route(departure, arrival,  plane_id)
 
-                return jsonify({"success": True, "message": "Route created successfully."})
+                # Find the plane object using plane_id
+                plane = next(
+                (plane for plane in carrier.airplanes if plane.id == plane_id), None)
+                # Instantiate the Route object
+                departure = db_handler.add_airport(departure)
+                arrival = db_handler.add_airport(arrival)
+                route = Route(departure, arrival, plane, ticket_price)
+
+                # Calculate the values using the ticket price
+                potential_passengers = route.passengers()
+                total_money = route.total_money()
+                route_length_km = route.route_lenght
+                route_length_minutes = route.flight_time
+                fuel_required = route.fuel_required
+                season = route.season
+
+                return jsonify({
+                    "success": True,
+                    "data": {
+                        "potential_passengers": potential_passengers,
+                        "total_money": total_money,
+                        "route_length_km": route_length_km,
+                        "route_length_minutes": route_length_minutes,
+                        "fuel_required": fuel_required,
+                        "season": season
+                    }
+                })
             except Exception as e:
-                print(f"Error in create_route: {str(e)}")
+                print(f"Error in fetch_route_data: {str(e)}")
                 return jsonify({"error": str(e)}), 500
-
     def run(self):
         self.router.run(debug=True)
 
@@ -285,7 +328,7 @@ def load_carrier():
     try:
         if os.path.getsize(save_path) > 0:
             with open(save_path, 'rb') as f:
-                carrier = pickle.load(f)
+               carrier = pickle.load(f)
             return carrier
     except Exception:
         pass
@@ -302,6 +345,7 @@ if __name__ == '__main__':
         carrier.new_plane("B350")
         carrier.new_plane("P300")
         carrier.new_plane("L75")
+        carrier.new_plane("SSD")
         carrier.money=100000000
         carrier.save()
     atexit.register(carrier.save)

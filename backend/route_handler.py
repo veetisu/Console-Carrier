@@ -65,6 +65,7 @@ class Route():
                             plane.cruise_speed)*cfg.flight_time_multiplier
         self.status = "ready"
         self.ticket_price = set_ticket_price
+        self.season = "None"
         
         self.start_periodic_update()
     def start_periodic_update(self):
@@ -72,7 +73,7 @@ class Route():
         real_time_month_duration = (30 * 24 * 60 * 60) / cfg.TIME_SCALE_FACTOR
 
         # Schedule the update_demand_factor method to be called periodically
-        Timer(real_time_month_duration, self.update_demand_factor).start()
+        Timer(real_time_month_duration*3, self.update_demand_factor).start()
 
     def take_off(self):
         self.status = "flying"
@@ -100,6 +101,8 @@ class Route():
 
     def passengers(self) -> int:
         """Returns the number of passengers that will be onboard this flight"""
+        if self.plane.type == "SSD":
+            return self.plane.passenger_capacity
         result = 0
         max_passengers = self.plane.passenger_capacity
         potential_passengers = self.departure_airport.airport_passengers()
@@ -119,7 +122,7 @@ class Route():
 
     def total_money(self) -> int:
         """Returns the amount of money that the route generates when flown."""
-        total_money = self.ticket_price() * self.passengers()
+        total_money = self.ticket_price * self.passengers()
         return total_money
     
     def calculate_base_ticket_price(self):
@@ -144,10 +147,16 @@ class Route():
         current_month = get_in_game_month(cfg.GAME_START_TIME)
         if current_month in [6, 7, 8]:  # High season
             self.demand_factor = random.uniform(1.1, 1.3)
+            self.season = "Summer, high demand"
         elif current_month in [12, 1, 2]:  # Low season
             self.demand_factor = random.uniform(0.7, 0.9)
-        else:  # Normal season
+            self.season = "Winter, low demand"
+        elif current_month in [3, 4, 5]:  # Normal season
             self.demand_factor = random.uniform(0.9, 1.1)
+            self.season = "Spring, regular demand"
+        elif current_month in [9, 10, 11]:  # Normal season
+            self.demand_factor = random.uniform(0.9, 1.1)
+            self.season = "Fall, regular demand"
         print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] Updated demand factor for route from {self.departure_airport.name} to {self.arrival_airport.name}: {self.demand_factor}")
 
 

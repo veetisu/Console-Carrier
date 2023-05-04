@@ -77,11 +77,11 @@ export const postBuyFuel = (amount: number, carrierId: number) => {
 		.catch((error) => console.error(error));
 };
 
-export const postFly = async (plane_id: number, departure: string, arrival: string, continous: boolean) => {
+export const postFly = async (plane_id: number, departure: string, arrival: string, continous: boolean, ticket_price: number) => {
 	const requestOptions = {
 		method: 'POST',
 		headers: {'Content-Type': 'application/json'},
-		body: JSON.stringify({departure, arrival, continous})
+		body: JSON.stringify({departure, arrival, continous, ticket_price})
 	};
 	try {
 		const response = await fetch(`http://localhost:5000/fly/${plane_id}`, requestOptions);
@@ -91,12 +91,16 @@ export const postFly = async (plane_id: number, departure: string, arrival: stri
 		}
 
 		const data = await response.json();
+		if (data.error) {
+			throw new Error(data.error);
+		}
 		return data;
 	} catch (error: any) {
 		console.error('Error in postFly:', error.message);
 		throw error;
 	}
 };
+
 export const getLanding = async (plane_id: number): Promise<Carrier | string> => {
 	try {
 		const response = await fetch(`${baseURL}/land/${plane_id}`);
@@ -207,29 +211,33 @@ export const removeRoute = async (planeId: number): Promise<Carrier | null> => {
 		return null;
 	}
 };
-export const createRoute = async (departure: string, arrival: string, ticket_price: number, plane_id: number, continous: boolean) => {
+// Add the new parameter `ticketPrice` to the function
+export const fetchRouteData = async (departure: string, arrival: string, ticketPrice: number, plane_id: number) => {
 	try {
-		const response = await fetch(`${baseURL}/create_route`, {
+		const response = await fetch(`${baseURL}/fetch_route_data`, {
 			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
 			body: JSON.stringify({
 				departure,
 				arrival,
-				ticket_price,
-				plane_id,
-				continous
+				ticket_price: ticketPrice, // Send the ticket price as a parameter
+				plane_id
 			})
 		});
 
 		if (response.status !== 200) {
-			throw new Error(`Error creating route: ${response.status} ${response.statusText}`);
+			throw new Error(`Error fetching route data: ${response.status} ${response.statusText}`);
 		}
 
-		return response.data;
+		return await response.json();
 	} catch (error) {
-		console.error('Error in createRoute:', error.message);
+		console.error('Error in fetchRouteData:', error.message);
 		throw error;
 	}
 };
+
 export async function fetchIsCancelled(plane_id: number): Promise<string> {
 	const response = await fetch(baseURL + '/is_cancelled/' + plane_id);
 	const data = await response.json();

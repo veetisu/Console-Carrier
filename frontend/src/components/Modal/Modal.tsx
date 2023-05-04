@@ -38,6 +38,8 @@ interface ModalProps {
 	routes: {[planeId: number]: Route};
 	removeRoute: (planeId: number) => void;
 	handleRouteRemoval: (planeId: number) => void;
+	ticketPrice: number;
+	setTicketPrice: (ticketPrice: number) => void;
 }
 
 export interface Plane {
@@ -67,7 +69,7 @@ export interface Plane {
 }
 
 function handleClick(plane: Plane) {}
-const Modal: React.FC<ModalProps> = ({handleRouteRemoval, onContinuousChange, onClose, type, planes, airport, onPlaneSelect, selectedFlyPlane, setSelectedFlyPlane, searchResults, handleSearch, destinationAirport, setDestinationAirport, handleFly, carrier, setCarrier, isFlyDisabled, routes}) => {
+const Modal: React.FC<ModalProps> = ({ticketPrice, setTicketPrice, handleRouteRemoval, onContinuousChange, onClose, type, planes, airport, onPlaneSelect, selectedFlyPlane, setSelectedFlyPlane, searchResults, handleSearch, destinationAirport, setDestinationAirport, handleFly, carrier, setCarrier, isFlyDisabled, routes}) => {
 	return (
 		<div className="modal mx-0">
 			<div className="modal-content">
@@ -92,7 +94,7 @@ const Modal: React.FC<ModalProps> = ({handleRouteRemoval, onContinuousChange, on
 						<div className="w-50"></div>
 					</div>
 				)}
-				{type === 'fly' && <FlyView planes={planes} setSelectedFlyPlane={setSelectedFlyPlane} selectedFlyPlane={selectedFlyPlane} handleSearch={handleSearch} onContinuousChange={onContinuousChange} searchResults={searchResults} setDestinationAirport={setDestinationAirport} destinationAirport={destinationAirport} handleFly={handleFly} isFlyDisabled={isFlyDisabled} />}
+				{type === 'fly' && <FlyView ticketPrice={ticketPrice} setTicketPrice={setTicketPrice} planes={planes} setSelectedFlyPlane={setSelectedFlyPlane} selectedFlyPlane={selectedFlyPlane} handleSearch={handleSearch} onContinuousChange={onContinuousChange} searchResults={searchResults} setDestinationAirport={setDestinationAirport} destinationAirport={destinationAirport} handleFly={handleFly} isFlyDisabled={isFlyDisabled} />}
 				{type === 'fuel' && <FuelView onCarrierUpdated={setCarrier} fuelPrice={2} carrier={carrier} onBuyMoreFuel={() => console.log('F')} />}
 				{type === 'shop' && <ShopView setCarrier={setCarrier}></ShopView>}
 				{type == 'routes' && <RouteView routes={routes} removeRoute={handleRouteRemoval} />}

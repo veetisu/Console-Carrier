@@ -13,8 +13,8 @@ def set_game_start_time(start_time):
     GAME_START_TIME = start_time
 # Parameters for calculating amount of passengers on a given airport
 # Formula is: randint(airport_min_passenger, airport_max_passengers) * airport_passenger_multiplier for the type
-airport_min_passenger = 1
-airport_max_passenger = 10
+airport_min_passenger = 10
+airport_max_passenger = 200
 airport_passenger_multiplier = {
     "large_airport": 4,
     "medium_airport": 2,
@@ -25,7 +25,7 @@ money_per_passenger_per_km = 1
 base_ticket_price_multiplier = 1
 price_sensitivity_divisor = 1
 
-flight_time_multiplier = 3
+flight_time_multiplier = 1
 
 vip_chance = 0
 
@@ -84,6 +84,15 @@ PLANES = {
     "passenger_capacity": 660,
     "fuel_consumption": 13,
     "price":400_000_000
-}
+},
+    "SSD": {
+        "type": "SSD",
+        "name": "Super Star Destroyer",
+        "range": 1200000, # km (approximation, assuming constant speed)
+        "cruise_speed": 900, # km/h (approximation)
+        "passenger_capacity": 280000, # including crew and troops
+        "fuel_consumption": 1600, # L/km (approximation, based on the massive size and energy consumption)
+        "price": 1_000_000_000_000 # fictitious price, as it's from the Star Wars universe
+    }
 
 }
