@@ -1,0 +1,40 @@
+"filename", "language", "TypeScript", "TypeScript JSX", "CSS", "XML", "comment", "blank", "total"
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\Map\App.ts", "TypeScript", 7, 0, 0, 0, 0, 1, 8
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\Map\Map.css", "CSS", 0, 0, 39, 0, 0, 3, 42
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\Map\Map.test.tsx", "TypeScript JSX", 0, 31, 0, 0, 5, 8, 44
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\Map\Map.tsx", "TypeScript JSX", 0, 283, 0, 0, 3, 22, 308
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\Map\api.ts", "TypeScript", 220, 0, 0, 0, 5, 21, 246
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\assets\message.tsx", "TypeScript JSX", 0, 5, 0, 0, 0, 2, 7
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\assets\react.svg", "XML", 0, 0, 0, 1, 0, 0, 1
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Alert\Alert.css", "CSS", 0, 0, 20, 0, 0, 3, 23
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Alert\Alert.tsx", "TypeScript JSX", 0, 33, 0, 0, 0, 9, 42
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Button\Button.module.css", "CSS", 0, 0, 68, 0, 0, 10, 78
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Button\Button.tsx", "TypeScript JSX", 0, 15, 0, 0, 0, 4, 19
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Like\Like.tsx", "TypeScript JSX", 0, 19, 0, 0, 0, 2, 21
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Login\Input.tsx", "TypeScript JSX", 0, 21, 0, 0, 0, 4, 25
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Login\Login.tsx", "TypeScript JSX", 0, 33, 0, 0, 0, 6, 39
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Modal\FlyView\FlyView.css", "CSS", 0, 0, 9, 0, 1, 2, 12
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Modal\FlyView\Flyview.tsx", "TypeScript JSX", 0, 163, 0, 0, 0, 10, 173
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Modal\FuelView\FuelView.css", "CSS", 0, 0, 18, 0, 0, 4, 22
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Modal\FuelView\FuelView.tsx", "TypeScript JSX", 0, 74, 0, 0, 0, 7, 81
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Modal\Modal.css", "CSS", 0, 0, 79, 0, 0, 13, 92
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Modal\Modal.tsx", "TypeScript JSX", 0, 100, 0, 0, 0, 7, 107
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Modal\PlanesView\PlanesView.tsx", "TypeScript JSX", 0, 64, 0, 0, 0, 4, 68
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Modal\RouteView\ActiveRoutesList.module.css", "CSS", 0, 0, 25, 0, 0, 6, 31
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Modal\RouteView\ActiveRoutesList.tsx", "TypeScript JSX", 0, 165, 0, 0, 0, 7, 172
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Modal\SearchBox.tsx", "TypeScript JSX", 0, 110, 0, 0, 2, 9, 121
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Modal\ShopView\ShopView.css", "CSS", 0, 0, 9, 0, 0, 1, 10
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\Modal\ShopView\ShopView.tsx", "TypeScript JSX", 0, 106, 0, 0, 0, 9, 115
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\NavBar\NavBar.css", "CSS", 0, 0, 38, 0, 0, 4, 42
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\NavBar\NavBar.tsx", "TypeScript JSX", 0, 64, 0, 0, 1, 6, 71
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\TrackingMarker\MovingMarker.tsx", "TypeScript JSX", 0, 67, 0, 0, 1, 19, 87
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\TrackingMarker\MovingMarker2.tsx", "TypeScript JSX", 0, 39, 0, 0, 0, 13, 52
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\components\TrackingMarker\TrackingMarker.tsx", "TypeScript JSX", 0, 79, 0, 0, 2, 18, 99
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\main.tsx", "TypeScript JSX", 0, 27, 0, 0, 0, 5, 32
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\types\Airplane.ts", "TypeScript", 159, 0, 0, 0, 2, 13, 174
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\types\Airport.ts", "TypeScript", 43, 0, 0, 0, 0, 2, 45
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\types\Carrier.ts", "TypeScript", 26, 0, 0, 0, 3, 4, 33
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\types\leaflet-marker-easing.d.ts", "TypeScript", 12, 0, 0, 0, 0, 2, 14
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\types\types.ts", "TypeScript", 2, 0, 0, 0, 0, 1, 3
+"c:\Dev\Koulu\ConsoleCarrier\Console-Carrier\frontend\src\vite-env.d.ts", "TypeScript", 0, 0, 0, 0, 1, 1, 2
+"Total", "-", 469, 1498, 305, 1, 26, 262, 2561

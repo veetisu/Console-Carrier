@@ -5,8 +5,6 @@ STARTING_MONEY = 100
 
 FUEL_PRICE_PER_LITER = 3
 TIME_SCALE_FACTOR = 8760  # 1 year in 1 hour
-
-
 GAME_START_TIME = datetime.datetime(2023, 5, 2, 12, 0, 0)  # Year, Month, Day, Hour, Minute, Second
 def set_game_start_time(start_time):
     global GAME_START_TIME

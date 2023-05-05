@@ -153,7 +153,6 @@ const ActiveRoutesList: React.FC<ActiveRoutesListProps> = ({routes, removeRoute}
 								</div>
 								<div className="mt-3">
 									<strong>Progress:</strong>
-									<ProgressBar now={(selectedRoute.iteration / selectedRoute.flight_time) * 100} label={`${((selectedRoute.iteration / selectedRoute.flight_time) * 100).toFixed(0)}%`} />
 								</div>
 							</Tab>
 						</Tabs>

@@ -135,7 +135,7 @@ const FlyView: React.FC<FlyViewProps> = ({ticketPrice, setTicketPrice, planes, s
 					)}
 				</div>
 			</div>
-			<div className="col-md-6 h-100">
+			<div className="col-md-6 h-100 position-relative">
 				<SearchBox onSearch={handleSearch} onContinuousChange={onContinuousChange}></SearchBox>
 				<div className="scrollable-content">
 					<div className="list-group mt-3">
@@ -159,7 +159,7 @@ const FlyView: React.FC<FlyViewProps> = ({ticketPrice, setTicketPrice, planes, s
 							})}
 					</div>
 				</div>
-				<div className="mt-4">
+				<div className="mt-4 fly-button-container">
 					<button disabled={isFlyDisabled} onClick={handleFly} className="btn btn-primary float-end mr-6 mb-4">
 						Fly
 					</button>
