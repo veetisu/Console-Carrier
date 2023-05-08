@@ -1,0 +1,41 @@
+.map-container {
+	height: calc(100vh - 37px);
+}
+body {
+	overflow: hidden;
+}
+.floating-fly-button {
+	color: white;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 35px;
+	position: absolute;
+	bottom: 4%;
+	right: 3%;
+	z-index: 2000;
+	padding: 3vw;
+	border-radius: 50%;
+	border: none;
+	background-color: #4b6abe;
+	box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.3);
+	cursor: pointer;
+	transition: all 0.3s ease;
+	text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
+}
+
+.floating-fly-button:hover {
+	background-color: #6983c9;
+	transform: translateY(-3px);
+	box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.alerts-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	position: absolute;
+	top: 20%;
+	left: 0;
+	right: 0;
+	z-index: 20000;
+}

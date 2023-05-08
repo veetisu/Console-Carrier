@@ -1,0 +1,13 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Python: Current File",
+			"type": "python",
+			"request": "launch",
+			"program": "${file}",
+			"console": "integratedTerminal",
+			"cwd": "X:/Dev/Koulu/Web/backend" // Replace with the correct path to the directory containing the 'save' folder
+		}
+	]
+}

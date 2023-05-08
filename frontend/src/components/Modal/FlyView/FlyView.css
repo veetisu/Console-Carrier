@@ -1,0 +1,11 @@
+/* styles.css or another suitable CSS file */
+.fly-button-container {
+	position: absolute;
+	bottom: 20px;
+	right: 20px;
+}
+
+.scrollable-content {
+	max-height: calc(100% - 120px); /* Adjust this value based on the size of other elements */
+	overflow-y: auto;
+}
